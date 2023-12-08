@@ -10,7 +10,13 @@ jobs:
   linters:
     name: Linting
     uses: KsQRooW/python-workflow/.github/workflows/linters.yml@main
+    with:
+      python_version: "3.12"
+      packaging_with: "poetry"
 
   tests:
     name: Testing
     uses: KsQRooW/python-workflow/.github/workflows/tests.yml@main
+    with:
+      python_version: "3.12"
+      packaging_with: "poetry"
