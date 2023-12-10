@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "gitlab-wh"
+version = "0.0.1"
+description = "This is a web service for GitLab Free owners that will help you expand functionality to the Premium/Ultimate version, as well as further automate some development processes."
+authors = [
+    "Kochetov Dmitriy <dimankochetov@yandex.ru>",
+    "Nikita Paramonov <nikita@nparamonov.ru>"
+]
+license = "Apache-2.0"
+readme = "README.md"
+packages = [{include = "gitlab-wh"}]
+repository = "https://github.com/KsQRooW/gitlab-wh"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "0.104.1"
+pydantic = "^2.5"
+granian = "^0.7"
+uvloop = "0.18.0"
+
+[tool.poetry.group.tests.dependencies]
+mypy = "1.7.1"
+ruff = "0.1.7"
+deptry = "0.12.0"
+pytest = "^7.4"
+coverage = "^7.3"
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^9.5"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D100", # undocumented-public-module
+    "D104", # undocumented-public-package
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"
