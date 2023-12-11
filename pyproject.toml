@@ -38,8 +38,10 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+    "ANN", # flake8-annotations
     "D100", # undocumented-public-module
     "D104", # undocumented-public-package
+    "D415", # ends-in-punctuation
 ]
 
 [tool.ruff.pydocstyle]
