@@ -1,0 +1,19 @@
+name: Docs deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - ".github/workflows/docs.yml"
+
+jobs:
+  deploy:
+    name: Docs Deploy
+    uses: KsQRooW/python-workflow/.github/workflows/docs.yml@main
+    with:
+      python_version: "3.12"
+      packaging_with: "poetry"
+      from: "docs"
