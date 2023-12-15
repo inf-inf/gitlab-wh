@@ -13,6 +13,8 @@ jobs:
   deploy:
     name: Docs Deploy
     uses: KsQRooW/python-workflow/.github/workflows/docs.yml@main
+    permissions:
+      contents: write
     with:
       python_version: "3.12"
       packaging_with: "poetry"
