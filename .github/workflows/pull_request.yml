@@ -13,6 +13,7 @@ jobs:
     with:
       python_version: "3.12"
       packaging_with: "poetry"
+      from: "tests"
 
   tests:
     name: Testing
@@ -20,3 +21,4 @@ jobs:
     with:
       python_version: "3.12"
       packaging_with: "poetry"
+      from: "tests"
