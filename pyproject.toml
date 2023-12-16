@@ -8,7 +8,7 @@ authors = [
 ]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{include = "gitlab-wh"}]
+packages = [{include = "src"}]
 repository = "https://github.com/KsQRooW/gitlab-wh"
 
 [tool.poetry.dependencies]
