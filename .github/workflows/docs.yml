@@ -10,8 +10,7 @@ on:
       - ".github/workflows/docs.yml"
 
 jobs:
-  deploy:
-    name: Docs Deploy
+  docs:
     uses: KsQRooW/python-workflow/.github/workflows/docs.yml@main
     permissions:
       contents: write
