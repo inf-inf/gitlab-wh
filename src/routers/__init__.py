@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 
-from .tools import tools_router
+from .api import api_router
+from .pages import pages_router
 
 main_router = APIRouter()
-main_router.include_router(tools_router)
+main_router.include_router(api_router)
+main_router.include_router(pages_router)
