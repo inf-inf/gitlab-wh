@@ -8,5 +8,5 @@ if TYPE_CHECKING:
 
 def test_ping(client: TestClient) -> None:
     """Test /tools/ping"""
-    response = client.get("/tools/ping")
-    assert response.text == "PONG"
+    response = client.get("/api/service/ping")
+    assert response.text == "pong"
