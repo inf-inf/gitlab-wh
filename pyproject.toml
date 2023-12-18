@@ -44,6 +44,8 @@ ignore = [
     "D100", # undocumented-public-module
     "D104", # undocumented-public-package
     "D415", # ends-in-punctuation
+    "TD", # flake8-todos
+    "FIX", # flake8-fixme
 ]
 
 [tool.ruff.lint.per-file-ignores]
