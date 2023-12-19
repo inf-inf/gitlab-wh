@@ -46,6 +46,7 @@ ignore = [
     "D415", # ends-in-punctuation
     "TD", # flake8-todos
     "FIX", # flake8-fixme
+    "RUF002", # ambiguous-unicode-character-docstring
 ]
 
 [tool.ruff.lint.per-file-ignores]
