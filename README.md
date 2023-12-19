@@ -6,12 +6,12 @@ Docs - https://ksqroow.github.io/gitlab-wh/
 # Local Debug
 ## Linux
 ```bash
-granian --interface asgi --log --log-level debug --loop uvloop src/main:gitlab_wh
+granian --interface asgi --log --log-level debug --loop uvloop src/main:gitlab_wh.app
 ```
 
 ## Windows
 ```bash
-granian --interface asgi --log --log-level debug --loop auto src/main:gitlab_wh
+granian --interface asgi --log --log-level debug --loop auto src/main:gitlab_wh.app
 ```
 
 # Tests
