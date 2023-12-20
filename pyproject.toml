@@ -60,8 +60,21 @@ max-args = 10
 [tool.ruff.pydocstyle]
 convention = "google"
 
+[tool.coverage.run]
+data_file = ".coverage/coverage"
+
 [tool.coverage.report]
 exclude_also = [
     "if TYPE_CHECKING:",
     "if __name__ == .__main__.:"
 ]
+show_missing = true
+
+[tool.coverage.html]
+directory = ".coverage/htmlcov"
+
+[tool.coverage.xml]
+output = ".coverage/coverage.xml"
+
+[tool.coverage.json]
+output = ".coverage/coverage.json"
