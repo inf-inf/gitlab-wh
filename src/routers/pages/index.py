@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from fastapi.responses import RedirectResponse
 
-index_router = APIRouter(tags=["index"])
+index_router = APIRouter(tags=["pages.index"])
 
 
 @index_router.get("/", summary="Главная страница")

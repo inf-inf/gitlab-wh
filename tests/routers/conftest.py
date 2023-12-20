@@ -7,4 +7,4 @@ from src.main import gitlab_wh
 @pytest.fixture()
 def client() -> TestClient:
     """Возвращает экземпляр приложения FastAPI для тестирования"""
-    return TestClient(gitlab_wh)
+    return TestClient(gitlab_wh.app)

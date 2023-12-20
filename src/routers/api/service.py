@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 
-service_router = APIRouter(prefix="/service", tags=["service"])
+service_router = APIRouter(prefix="/service", tags=["api.service"])
 
 
 @service_router.get("/ping", summary="Проверка доступности API")

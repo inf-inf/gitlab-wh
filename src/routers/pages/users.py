@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from src.app.templates import CommonTemplateResponseGenerator
 from src.dependencies.templates import get_common_trg_prefill_path
 
-users_router = APIRouter(prefix="/users", tags=["users"])
+users_router = APIRouter(prefix="/users", tags=["pages.users"])
 
 GetTRGDep = Annotated[CommonTemplateResponseGenerator, Depends(get_common_trg_prefill_path("pages/users"))]
 
