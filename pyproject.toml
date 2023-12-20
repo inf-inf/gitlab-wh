@@ -14,6 +14,7 @@ repository = "https://github.com/KsQRooW/gitlab-wh"
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "0.105.0"
+starlette = ">=0.27.0,<0.28.0"
 pydantic = "^2.5"
 granian = "^0.7"
 uvloop = {version = "0.18.0", markers = "sys_platform == 'linux'"}
