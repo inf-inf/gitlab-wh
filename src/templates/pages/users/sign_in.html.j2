@@ -57,7 +57,7 @@
                 <img class="mb-4" src="/static/img/logo.svg" alt="logo" width="72" height="57">
                 <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
             </div>
-
+            {% include 'elements/alert.html.j2' %}
             <div class="form-floating">
                 <input type="text" class="form-control" id="floatingInput" placeholder="Username" name="username"
                     minlength="1" maxlength="20" required autofocus value="{{ username or '' }}">
