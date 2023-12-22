@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Query, Response
 from fastapi.responses import HTMLResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
@@ -12,6 +12,12 @@ GetTRGDep = Annotated[CommonTemplateResponseGenerator, Depends(get_common_trg_pr
 
 
 @users_router.get("/sign_in", response_class=HTMLResponse, summary="Страница входа")
-async def sign_in(get_trg: GetTRGDep) -> Response:
+async def sign_in(get_trg: GetTRGDep,
+                  redirect: str = Query("/", description=("Страница, на которую произойдет редирект в случае "
+                                                          "успешной авторизации")),
+                  ) -> Response:
     """Страница входа в админ панель"""
-    return get_trg.generate_response("sign_in.html.j2")
+    context = {
+          "redirect": redirect,
+    }
+    return get_trg.generate_response("sign_in.html.j2", context)
