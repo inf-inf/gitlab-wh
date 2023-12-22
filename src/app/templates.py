@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.background import BackgroundTask
 
 from src import config
+from src.types.pages import Alert
 
 
 class CommonTemplateResponseGenerator:
@@ -34,11 +35,12 @@ class CommonTemplateResponseGenerator:
                 относительно `config.HTML_TEMPLATES_FOLDER_PATH`
         """
         self._directory = directory
-        self._context = {"request": request}
+        self._context: dict[str, Any] = {"request": request}
 
     def generate_response(self,
                           name: str,
                           context: dict[str, Any] | None = None,
+                          alert: Alert | None = None,
                           status_code: int = 200,
                           headers: Mapping[str, str] | None = None,
                           media_type: str | None = None,
@@ -49,6 +51,7 @@ class CommonTemplateResponseGenerator:
         Args:
             name (str): имя файла шаблона
             context (dict[str, Any] | None, optional): параметры для подставления в шаблон
+            alert (Alert, optional): уведомление для пользователя
             status_code (int, optional): Статус код ответа
             headers (Mapping[str, str] | None, optional): Хедеры ответа
             media_type (str | None, optional): media_type ответа
@@ -61,6 +64,9 @@ class CommonTemplateResponseGenerator:
 
         if context:
             self._context.update(context)
+
+        if alert:
+            self._context.update({"alert": alert})
 
         return self._templates.TemplateResponse(
             name=str(template_name),
