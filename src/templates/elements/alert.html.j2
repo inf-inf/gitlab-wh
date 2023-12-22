@@ -1,33 +1,33 @@
 {% if alert %}
 
-{% if alert['level'] == 'info' %}
+{% if alert.level == 'info' %}
 <div class="alert alert-primary d-flex align-items-center alert-dismissible" role="alert">
     <i class="bi bi-info-circle-fill flex-shrink-0 me-2"></i>
-    <div>{{ alert['msg'] }}</div>
+    <div>{{ alert.msg }}</div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
-{% elif alert['level'] == 'success' %}
+{% elif alert.level == 'success' %}
 
 <div class="alert alert-success d-flex align-items-center alert-dismissible" role="alert">
     <i class="bi bi-check-circle-fill flex-shrink-0 me-2"></i>
-    <div>{{ alert['msg'] }}</div>
+    <div>{{ alert.msg }}</div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
-{% elif alert['level'] == 'warning' %}
+{% elif alert.level == 'warning' %}
 
 <div class="alert alert-warning d-flex align-items-center alert-dismissible" role="alert">
     <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
-    <div>{{ alert['msg'] }}</div>
+    <div>{{ alert.msg }}</div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
-{% elif alert['level'] == 'error' %}
+{% elif alert.level == 'error' %}
 
 <div class="alert alert-danger d-flex align-items-center alert-dismissible" role="alert">
     <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
-    <div>{{ alert['msg'] }}</div>
+    <div>{{ alert.msg }}</div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {% endif %}
