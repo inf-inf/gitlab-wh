@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
 from src.dependencies.templates import get_common_trg_prefill_path
+from src.types.pages import Alert
 
 users_router = APIRouter(prefix="/users", tags=["pages.users"])
 
@@ -33,6 +34,6 @@ async def post_sign_in(get_trg: GetTRGDep,
       context = {
             "username": username,
             "redirect": redirect,
-            "alert": {"level": "error", "msg": "Неверный логин или пароль"},
       }
-      return get_trg.generate_response("sign_in.html.j2", context)
+      alert = Alert(level="error", msg="Неверный логин или пароль")
+      return get_trg.generate_response("sign_in.html.j2", context=context, alert=alert)
