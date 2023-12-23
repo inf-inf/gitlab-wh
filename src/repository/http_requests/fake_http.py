@@ -44,17 +44,17 @@ class FakeClientSession(ClientSession):
     """Fake реализация aiohttp-сессии"""
     def __init__(self,
                  data: T | None = None,
-                 status_code: int = 200,
+                 status: int = 200,
                  headers: dict[str, str] | None = None,
                  ) -> None:
         """Конструктор
 
         Args:
             data: данные, которые вернутся в методе FakeResponse.json()
-            status_code: статус код, который вернется при вызове атрибута FakeResponse.status
+            status: статус код, который вернется при вызове атрибута FakeResponse.status
             headers: HTTP заголовки, которые вернутся при вызове атрибута FakeResponse.headers
         """
-        self._fake_response = FakeResponse(data, status_code, headers)
+        self._fake_response = FakeResponse(data, status, headers)
 
     def fake_request(self, _url: str, *_args: Any, **_kwargs: Any) -> FakeResponse[Any]:
         """Mock ClientSession.get"""
