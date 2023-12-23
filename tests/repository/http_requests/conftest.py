@@ -8,9 +8,9 @@ def request_data() -> dict[str, Any]:
     """Возвращает данные для FakeClientSession.fake_request"""
     data = {"some": "data"}
     headers = {"some": "headers"}
-    status_code = 333
+    status = 333
     return {
         "data": data,
         "headers": headers,
-        "status_code": status_code,
+        "status": status,
     }

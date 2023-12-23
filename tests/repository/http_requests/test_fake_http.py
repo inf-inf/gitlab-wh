@@ -32,7 +32,7 @@ class TestFakeClientSession:
         assert isinstance(fake_response, FakeResponse)
         assert fake_response.data == request_data["data"]
         assert fake_response.headers == request_data["headers"]
-        assert fake_response.status == request_data["status_code"]
+        assert fake_response.status == request_data["status"]
 
     def test_get(self, request_data: dict[str, Any]) -> None:
         """Testing FakeClientSession.get"""
