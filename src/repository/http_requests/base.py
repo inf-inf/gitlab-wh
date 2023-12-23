@@ -32,7 +32,7 @@ class BaseHTTP:
     async def _get(self,
                    url: str,
                    params: dict[str, Any] | None = None,
-                   headers: dict[str, Any] | None = None
+                   headers: dict[str, Any] | None = None,
                    ) -> ResponseModel:
         """Реализация GET запроса
 
@@ -54,7 +54,7 @@ class BaseHTTP:
     async def _post(self,
                     url: str,
                     data: dict[str, Any] | None = None,
-                    headers: dict[str, Any] | None = None
+                    headers: dict[str, Any] | None = None,
                     ) -> ResponseModel:
         """Реализация POST запроса
 
@@ -76,7 +76,7 @@ class BaseHTTP:
     async def _put(self,
                    url: str,
                    data: dict[str, Any] | None = None,
-                   headers: dict[str, Any] | None = None
+                   headers: dict[str, Any] | None = None,
                    ) -> ResponseModel:
         """Реализация PUT запроса
 
@@ -98,7 +98,7 @@ class BaseHTTP:
     async def _patch(self,
                      url: str,
                      data: dict[str, Any] | None = None,
-                     headers: dict[str, Any] | None = None
+                     headers: dict[str, Any] | None = None,
                      ) -> ResponseModel:
         """Реализация PATCH запроса
 
@@ -120,7 +120,7 @@ class BaseHTTP:
     async def _delete(self,
                       url: str,
                       params: dict[str, Any] | None = None,
-                      headers: dict[str, Any] | None = None
+                      headers: dict[str, Any] | None = None,
                       ) -> ResponseModel:
         """Реализация DELETE запроса
 
