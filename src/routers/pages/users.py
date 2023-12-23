@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
 from src.dependencies.templates import get_common_trg_prefill_path
-from src.types.pages import Alert
+from src.models.pages.alert import Alert
 
 users_router = APIRouter(prefix="/users", tags=["pages.users"])
 

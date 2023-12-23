@@ -1,5 +1,3 @@
-"""Хинты для работы с HTML страницами (шаблонами)"""
-
 from typing import Literal, NamedTuple
 
 

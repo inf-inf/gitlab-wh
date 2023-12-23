@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.background import BackgroundTask
 
 from src import config
-from src.types.pages import Alert
+from src.models.pages.alert import Alert
 
 
 class CommonTemplateResponseGenerator:
