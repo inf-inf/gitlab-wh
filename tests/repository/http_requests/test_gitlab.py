@@ -2,8 +2,8 @@ from typing import Any, ClassVar
 
 import pytest
 
-from src.repository.http_requests.gitlab import GitLabHTTP
 from src.repository.http_requests.fake_http import FakeClientSession
+from src.repository.http_requests.gitlab import GitLabHTTP
 
 
 class TestGitLabHTTP:

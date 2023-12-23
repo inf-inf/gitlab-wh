@@ -11,7 +11,7 @@ class TestFakeResponse:
     @pytest.mark.asyncio()
     async def test_aenter(self) -> None:
         """Testing FakeResponse.__aenter__"""
-        async with FakeResponse() as fake_response:
+        async with FakeResponse("test") as fake_response:
             assert isinstance(fake_response, FakeResponse)
 
     @pytest.mark.asyncio()
