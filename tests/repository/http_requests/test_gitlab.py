@@ -14,28 +14,28 @@ class TestGitLabHTTP:
                 "data": [{"some": "value"}],
                 "status": 200,
             },
-            True
+            True,
         ),
         (
             {
                 "data": {"some": "value"},
                 "status": 200,
             },
-            False
+            False,
         ),
         (
             {
                 "data": [{"some": "value"}],
                 "status": 400,
             },
-            False
+            False,
         ),
         (
             {
                 "data": {"some": "value"},
                 "status": 500,
             },
-            False
+            False,
         ),
     ]
 

@@ -11,7 +11,7 @@ class FakeResponse(Generic[T]):
     def __init__(self,
                  data: T | None = None,
                  status: int = 200,
-                 headers: dict[str, str] | None = None
+                 headers: dict[str, str] | None = None,
                  ) -> None:
         """Конструктор
 
@@ -60,8 +60,8 @@ class FakeClientSession(ClientSession):
         """Mock ClientSession.get"""
         return self._fake_response
 
-    get = fake_request
-    post = fake_request
-    put = fake_request
-    patch = fake_request
-    delete = fake_request
+    get = fake_request  # type: ignore[assignment]
+    post = fake_request  # type: ignore[assignment]
+    put = fake_request  # type: ignore[assignment]
+    patch = fake_request  # type: ignore[assignment]
+    delete = fake_request  # type: ignore[assignment]
