@@ -82,4 +82,4 @@ output = ".coverage/coverage.xml"
 output = ".coverage/coverage.json"
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["granian", "uvloop", "jinja2"]
+DEP002 = ["granian", "uvloop", "jinja2", "python-multipart"]
