@@ -1,17 +1,39 @@
-from typing import Any
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from aiohttp import ClientSession
+
+
+@dataclass
+class ResponseModel:
+    """Модель Response, возвращаемая BaseHTTP
+
+    Args:
+        data: тело HTTP ответа
+        status_code: статус код HTTP ответа
+        headers: заголовки HTTP ответа
+    """
+    data: dict[str, Any] | list[dict[str, Any]]
+    status_code: int
+    headers: Mapping[str, str]
 
 
 class BaseHTTP:
     """Базовый класс для реализации HTTP запросов"""
-    def __init__(self) -> None:
+    def __init__(self, session: ClientSession) -> None:
         """Конструктор"""
-        self._session = ...
+        self._session = session
 
     async def _get(self,
                    url: str,
                    params: dict[str, Any] | None = None,
-                   headers: dict[str, Any] | None = None
-                   ) -> dict[str, Any]:
+                   headers: dict[str, Any] | None = None,
+                   ) -> ResponseModel:
         """Реализация GET запроса
 
         Args:
@@ -22,13 +44,18 @@ class BaseHTTP:
         Returns:
             Результат GET запроса (JSON в виде словаря)
         """
-        return {}
+        async with self._session.get(url, params=params, headers=headers) as response:
+            return ResponseModel(
+                data=await response.json(),
+                status_code=response.status,
+                headers=response.headers,
+            )
 
     async def _post(self,
                     url: str,
                     data: dict[str, Any] | None = None,
-                    headers: dict[str, Any] | None = None
-                    ) -> dict[str, Any]:
+                    headers: dict[str, Any] | None = None,
+                    ) -> ResponseModel:
         """Реализация POST запроса
 
         Args:
@@ -39,13 +66,18 @@ class BaseHTTP:
         Returns:
             Результат POST запроса (JSON в виде словаря)
         """
-        return {}
+        async with self._session.post(url, json=data, headers=headers) as response:
+            return ResponseModel(
+                data=await response.json(),
+                status_code=response.status,
+                headers=response.headers,
+            )
 
     async def _put(self,
                    url: str,
                    data: dict[str, Any] | None = None,
-                   headers: dict[str, Any] | None = None
-                   ) -> dict[str, Any]:
+                   headers: dict[str, Any] | None = None,
+                   ) -> ResponseModel:
         """Реализация PUT запроса
 
         Args:
@@ -56,13 +88,18 @@ class BaseHTTP:
         Returns:
             Результат PUT запроса (JSON в виде словаря)
         """
-        return {}
+        async with self._session.put(url, json=data, headers=headers) as response:
+            return ResponseModel(
+                data=await response.json(),
+                status_code=response.status,
+                headers=response.headers,
+            )
 
     async def _patch(self,
                      url: str,
                      data: dict[str, Any] | None = None,
-                     headers: dict[str, Any] | None = None
-                     ) -> dict[str, Any]:
+                     headers: dict[str, Any] | None = None,
+                     ) -> ResponseModel:
         """Реализация PATCH запроса
 
         Args:
@@ -73,13 +110,18 @@ class BaseHTTP:
         Returns:
             Результат PATCH запроса (JSON в виде словаря)
         """
-        return {}
+        async with self._session.patch(url, json=data, headers=headers) as response:
+            return ResponseModel(
+                data=await response.json(),
+                status_code=response.status,
+                headers=response.headers,
+            )
 
     async def _delete(self,
                       url: str,
                       params: dict[str, Any] | None = None,
-                      headers: dict[str, Any] | None = None
-                      ) -> dict[str, Any]:
+                      headers: dict[str, Any] | None = None,
+                      ) -> ResponseModel:
         """Реализация DELETE запроса
 
         Args:
@@ -90,4 +132,9 @@ class BaseHTTP:
         Returns:
             Результат DELETE запроса (JSON в виде словаря)
         """
-        return {}
+        async with self._session.delete(url, params=params, headers=headers) as response:
+            return ResponseModel(
+                data=await response.json(),
+                status_code=response.status,
+                headers=response.headers,
+            )
