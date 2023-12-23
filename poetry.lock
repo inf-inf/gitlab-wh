@@ -858,6 +858,24 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-static-i18n"
+version = "1.2.0"
+description = "MkDocs i18n plugin using static translation markdown files"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mkdocs_static_i18n-1.2.0-py3-none-any.whl", hash = "sha256:3a076c128f6096a5b5bdcdbce44c038cf8cc77b6fdad5525bbecabd3787435fb"},
+    {file = "mkdocs_static_i18n-1.2.0.tar.gz", hash = "sha256:4bd0ffec9f1d966b66ace853027b586889ae9a4b2b80c42eb51d4290e5ce0fd7"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.5.2"
+mkdocs-material = {version = ">=9.2.5", optional = true, markers = "extra == \"material\""}
+
+[package.extras]
+material = ["mkdocs-material (>=9.2.5)"]
+
+[[package]]
 name = "multidict"
 version = "6.0.4"
 description = "multidict implementation"
@@ -1861,4 +1879,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "438dc5bcbd1766655cca1ab3ef00597168fdaeb527896cf8a660b6982de99e52"
+content-hash = "c49d42a53f303875574303561fee830b2e8ece1f0fdbe4596ab7990a15a64bd6"
