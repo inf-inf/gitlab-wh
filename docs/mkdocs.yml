@@ -1,0 +1,49 @@
+site_name: GitLab WH
+
+repo_name: inf-inf/gitlab-wh
+repo_url: https://github.com/inf-inf/gitlab-wh
+
+theme:
+  name: material
+  language: ru
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  icon:
+    logo: simple/gitlab
+  favicon: /assets/logo.svg
+
+extra:
+  alternate:
+    - name: Русский язык
+      link: /
+      lang: ru
+    - name: English
+      link: /en/
+      lang: en
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/inf-inf
+    - icon: fontawesome/solid/globe
+      link: http://inf-inf.com/
+
+plugins:
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: ru
+          default: true
+          name: Русский язык
+          build: true
+        - locale: en
+          name: English
+          build: true

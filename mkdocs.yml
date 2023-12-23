@@ -1,8 +1,0 @@
-site_name: GitLab WH
-
-repo_name: gitlab-wh
-repo_url: https://github.com/KsQRooW/gitlab-wh
-edit_uri: ''
-
-theme:
-  name: material
