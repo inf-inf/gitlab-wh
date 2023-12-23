@@ -20,6 +20,7 @@ granian = "^0.7"
 uvloop = {version = "0.18.0", markers = "sys_platform == 'linux'"}
 jinja2 = "^3.1.2"
 aiohttp = "^3.9.1"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.tests.dependencies]
 mypy = "1.7.1"
@@ -31,6 +32,7 @@ httpx = "^0.25.2"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5"
+mkdocs-static-i18n = {extras = ["material"], version = "^1.2.0"}
 
 [tool.mypy]
 strict = true
@@ -81,4 +83,4 @@ output = ".coverage/coverage.xml"
 output = ".coverage/coverage.json"
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["granian", "uvloop", "jinja2"]
+DEP002 = ["granian", "uvloop", "jinja2", "python-multipart"]

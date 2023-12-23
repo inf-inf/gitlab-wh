@@ -858,6 +858,24 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-static-i18n"
+version = "1.2.0"
+description = "MkDocs i18n plugin using static translation markdown files"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mkdocs_static_i18n-1.2.0-py3-none-any.whl", hash = "sha256:3a076c128f6096a5b5bdcdbce44c038cf8cc77b6fdad5525bbecabd3787435fb"},
+    {file = "mkdocs_static_i18n-1.2.0.tar.gz", hash = "sha256:4bd0ffec9f1d966b66ace853027b586889ae9a4b2b80c42eb51d4290e5ce0fd7"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.5.2"
+mkdocs-material = {version = ">=9.2.5", optional = true, markers = "extra == \"material\""}
+
+[package.extras]
+material = ["mkdocs-material (>=9.2.5)"]
+
+[[package]]
 name = "multidict"
 version = "6.0.4"
 description = "multidict implementation"
@@ -1261,6 +1279,20 @@ files = [
 
 [package.dependencies]
 six = ">=1.5"
+
+[[package]]
+name = "python-multipart"
+version = "0.0.6"
+description = "A streaming multipart parser for Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python_multipart-0.0.6-py3-none-any.whl", hash = "sha256:ee698bab5ef148b0a760751c261902cd096e57e10558e11aca17646b74ee1c18"},
+    {file = "python_multipart-0.0.6.tar.gz", hash = "sha256:e9925a80bb668529f1b67c7fdb0a5dacdd7cbfc6fb0bff3ea443fe22bdd62132"},
+]
+
+[package.extras]
+dev = ["atomicwrites (==1.2.1)", "attrs (==19.2.0)", "coverage (==6.5.0)", "hatch", "invoke (==1.7.3)", "more-itertools (==4.3.0)", "pbr (==4.3.0)", "pluggy (==1.0.0)", "py (==1.11.0)", "pytest (==7.2.0)", "pytest-cov (==4.0.0)", "pytest-timeout (==2.1.0)", "pyyaml (==5.1)"]
 
 [[package]]
 name = "pyyaml"
@@ -1847,4 +1879,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "60a48a09486ac0a5b3d03bb1ee742a6aee20a485631c1ebb54e1d5584c33d0cb"
+content-hash = "c49d42a53f303875574303561fee830b2e8ece1f0fdbe4596ab7990a15a64bd6"
