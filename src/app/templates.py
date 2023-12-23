@@ -58,7 +58,7 @@ class CommonTemplateResponseGenerator:
             background (BackgroundTask | None, optional): BackgroundTask ответа
 
         Returns:
-            Response: _description_
+            Response: фактически, HTMLResponse, готовая страница
         """
         template_name = Path(self._directory, name)
 
