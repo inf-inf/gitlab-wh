@@ -14,9 +14,13 @@ repository = "https://github.com/KsQRooW/gitlab-wh"
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "0.105.0"
+starlette = ">=0.27.0,<0.28.0"
 pydantic = "^2.5"
 granian = "^0.7"
 uvloop = {version = "0.18.0", markers = "sys_platform == 'linux'"}
+jinja2 = "^3.1.2"
+aiohttp = "^3.9.1"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.tests.dependencies]
 mypy = "1.7.1"
@@ -25,9 +29,11 @@ deptry = "0.12.0"
 pytest = "^7.4"
 coverage = "^7.3"
 httpx = "^0.25.2"
+pytest-asyncio = "^0.23.2"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5"
+mkdocs-static-i18n = {extras = ["material"], version = "^1.2.0"}
 
 [tool.mypy]
 strict = true
@@ -43,16 +49,39 @@ ignore = [
     "D100", # undocumented-public-module
     "D104", # undocumented-public-package
     "D415", # ends-in-punctuation
+    "TD", # flake8-todos
+    "FIX", # flake8-fixme
+    "RUF001", # ambiguous-unicode-character-string
+    "RUF002", # ambiguous-unicode-character-docstring
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]  # assert
 
+[tool.ruff.lint.pylint]
+max-args = 10
+
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.coverage.run]
+data_file = ".coverage/coverage"
 
 [tool.coverage.report]
 exclude_also = [
     "if TYPE_CHECKING:",
     "if __name__ == .__main__.:"
 ]
+show_missing = true
+
+[tool.coverage.html]
+directory = ".coverage/htmlcov"
+
+[tool.coverage.xml]
+output = ".coverage/coverage.xml"
+
+[tool.coverage.json]
+output = ".coverage/coverage.json"
+
+[tool.deptry.per_rule_ignores]
+DEP002 = ["granian", "uvloop", "jinja2", "python-multipart"]

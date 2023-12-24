@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python: FastAPI",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "granian",
+            "args": [
+                "src/main:gitlab_wh.app",
+                "--interface", "asgi",
+                "--log",
+                "--log-level", "debug",
+                "--loop", "uvloop",
+            ],
+            "windows": {
+                "args": [
+                    "src/main:gitlab_wh.app",
+                    "--interface", "asgi",
+                    "--log",
+                    "--log-level", "debug",
+                    "--loop", "auto",
+                ],
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+        }
+    ]
+}
