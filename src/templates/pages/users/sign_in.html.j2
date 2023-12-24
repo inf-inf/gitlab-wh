@@ -54,7 +54,9 @@
     <main class="form-signin w-100 m-auto">
         <form accept-charset="UTF-8" method="post">
             <div class="text-center">
-                <img class="mb-4" src="/static/img/logo.svg" alt="logo" width="72" height="57">
+                <div class="mb-4">
+                    {% include 'elements/logo.html.j2' %}
+                </div>
                 <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
             </div>
             {% include 'elements/alert.html.j2' %}
