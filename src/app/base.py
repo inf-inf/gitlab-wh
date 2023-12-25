@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import APIRouter, FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from .exception_handlers import exception_handlers
+
 
 class GitLabWH:
     """Приложение GitLab-WH"""
@@ -31,6 +33,7 @@ class GitLabWH:
                 "filter": True,
                 "requestSnippetsEnabled": True,
             },
+            exception_handlers=exception_handlers,
         )
         self._app.include_router(main_router)
         self._app.mount("/static", StaticFiles(directory=static_folder_path), name="static")
