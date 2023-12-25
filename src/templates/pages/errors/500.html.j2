@@ -1,0 +1,45 @@
+{% extends "base.html.j2" %}
+{% block title %}Страница не найдена{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <div class="p-5 text-center bg-body-tertiary rounded-3">
+        <div class="mt-4 mb-3">
+            {% include 'elements/logo.html.j2' %}
+        </div>
+        <h1 class="text-body-emphasis">Сервис недоступен <sup class="text-body-secondary">500</sup></h1>
+        <p class="col-lg-8 mx-auto fs-5 text-muted">
+            Попробуйте обновить страницу позже.
+        </p>
+        <div class="d-inline-flex gap-2 mb-5">
+            <a class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" href="/">
+                Главная
+                <i class="bi bi-arrow-right-short"></i>
+            </a>
+            <a class="btn btn-outline-secondary btn-lg px-4 rounded-pill" href="javascript:history.back()"
+                id="back-link">
+                Назад
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Выставляем ссылку чтобы её было видно при наведении и можно было открыть в новой вкладке
+    var element = document.getElementById('back-link');
+    element.setAttribute('href', document.referrer);
+    element.onclick = function () {
+        history.back();
+        return false;
+    }
+</script>
+{% endblock %}
