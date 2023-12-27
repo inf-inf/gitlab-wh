@@ -1,5 +1,6 @@
 
 from collections.abc import Callable, Coroutine
+from traceback import format_exc
 from typing import Any
 
 from fastapi.exception_handlers import (
@@ -11,6 +12,8 @@ from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response
 from starlette.status import HTTP_404_NOT_FOUND
+
+from src import config
 
 from .templates import CommonTemplateResponseGenerator
 
@@ -44,7 +47,14 @@ async def html_unhandled_exception_handler(request: Request, exc: Exception) -> 
         return PlainTextResponse("Internal Server Error", status_code=500)
 
     ctrg = CommonTemplateResponseGenerator(request, "pages/errors")
-    return ctrg.generate_response("500.html.j2")
+
+    debug: dict[str, Any] = {}
+    if config.SHOW_TRACEBACK:
+        debug["traceback"] = format_exc()
+
+    context: dict[str, Any] = {"debug": debug} if debug else {}
+
+    return ctrg.generate_response("500.html.j2", context=context, status_code=500)
 
 
 exception_handlers: dict[int | type[Exception], Callable[[Request, Any], Coroutine[Any, Any, Response]]] = {
