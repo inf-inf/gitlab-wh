@@ -3,29 +3,37 @@
 
 {% block head %}
 {{ super() }}
+{% if debug %}{% include 'helpers/highlightjs.html.j2' %}{% endif %}
 {% endblock %}
 
 {% block content %}
 
 <div class="container my-5">
-    <div class="p-5 text-center bg-body-tertiary rounded-3">
-        <div class="mt-4 mb-3">
-            {% include 'elements/logo.html.j2' %}
+    <div class="p-5 bg-body-tertiary rounded-3">
+        <div class="text-center">
+            <div class="mt-4 mb-3">
+                {% include 'elements/logo.html.j2' %}
+            </div>
+            <h1 class="text-body-emphasis">{{ error_title }} <sup class="text-body-secondary">{{ error_code }}</sup></h1>
+            <p class="col-lg-8 mx-auto fs-5 text-muted">
+                {{ error_message }}
+            </p>
+            <div class="d-inline-flex gap-2 mb-5">
+                <a class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" href="/">
+                    Главная
+                    <i class="bi bi-arrow-right-short"></i>
+                </a>
+                <a class="btn btn-outline-secondary btn-lg px-4 rounded-pill" href="javascript:history.back()"
+                    id="back-link">
+                    Назад
+                </a>
+            </div>
         </div>
-        <h1 class="text-body-emphasis">{{ error_title }} <sup class="text-body-secondary">{{ error_code }}</sup></h1>
-        <p class="col-lg-8 mx-auto fs-5 text-muted">
-            {{ error_message }}
-        </p>
-        <div class="d-inline-flex gap-2 mb-5">
-            <a class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" href="/">
-                Главная
-                <i class="bi bi-arrow-right-short"></i>
-            </a>
-            <a class="btn btn-outline-secondary btn-lg px-4 rounded-pill" href="javascript:history.back()"
-                id="back-link">
-                Назад
-            </a>
-        </div>
+
+        {% if debug %}
+        <hr>
+        <pre class="bg-body-secondary "><code class="language-python">{{ debug['traceback'] }}</code></pre>
+        {% endif %}
     </div>
 </div>
 
