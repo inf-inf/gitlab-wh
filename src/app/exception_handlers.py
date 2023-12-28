@@ -30,10 +30,10 @@ async def html_http_exception_handler(request: Request, exc: HTTPException) -> R
     ctrg = CommonTemplateResponseGenerator(request, "pages/errors")
 
     if exc.status_code == HTTP_404_NOT_FOUND:
-        return ctrg.generate_response("404.html.j2")
+        return ctrg.generate_response("404.html.j2", status_code=exc.status_code)
 
     context = {"error_code": exc.status_code, "error_message": exc.detail}
-    return ctrg.generate_response("4xx.html.j2", context=context)
+    return ctrg.generate_response("4xx.html.j2", context=context, status_code=exc.status_code)
 
 
 async def html_request_validation_exception_handler(request: Request, exc: RequestValidationError) -> Response:
@@ -43,7 +43,7 @@ async def html_request_validation_exception_handler(request: Request, exc: Reque
         return await request_validation_exception_handler(request, exc)
 
     ctrg = CommonTemplateResponseGenerator(request, "pages/errors")
-    return ctrg.generate_response("422.html.j2")
+    return ctrg.generate_response("422.html.j2", status_code=422)
 
 
 async def html_unhandled_exception_handler(request: Request, exc: Exception) -> Response:
