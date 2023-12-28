@@ -1,4 +1,5 @@
 
+import logging
 from collections.abc import Callable, Coroutine
 from traceback import format_exc
 from typing import Any
@@ -17,9 +18,12 @@ from src import config
 
 from .templates import CommonTemplateResponseGenerator
 
+logger = logging.getLogger("gitlab-wh.error")
+
 
 async def html_http_exception_handler(request: Request, exc: HTTPException) -> Response:
     """Обработчик ошибки HTTPException"""
+    logger.exception("Ошибка HTTPException")
     if request.url.path.startswith("/api"):
         return await http_exception_handler(request, exc)
 
@@ -34,6 +38,7 @@ async def html_http_exception_handler(request: Request, exc: HTTPException) -> R
 
 async def html_request_validation_exception_handler(request: Request, exc: RequestValidationError) -> Response:
     """Обработчик ошибки RequestValidationError"""
+    logger.exception("Ошибка RequestValidationError")
     if request.url.path.startswith("/api"):
         return await request_validation_exception_handler(request, exc)
 
@@ -43,6 +48,7 @@ async def html_request_validation_exception_handler(request: Request, exc: Reque
 
 async def html_unhandled_exception_handler(request: Request, exc: Exception) -> Response:
     """Обработчик ошибки Exception"""
+    logger.exception("Необработанная ошибка")
     if request.url.path.startswith("/api"):
         return PlainTextResponse("Internal Server Error", status_code=500)
 
