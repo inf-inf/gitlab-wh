@@ -5,6 +5,7 @@ from urllib.parse import quote
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 logger = logging.getLogger("gitlab-wh.access")
+logger.setLevel(logging.INFO)
 
 class AccessLogMiddleware:
     """Логирование запросов
