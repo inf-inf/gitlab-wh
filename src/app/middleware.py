@@ -47,8 +47,15 @@ class AccessLogMiddleware:
             end_time = time.time()
             duration_ms = int((end_time - start_time) * 1_000)
             status_phrase = http.HTTPStatus(status_code).phrase
-            msg = f'"{full_request_line}" {status_code} {status_phrase} ({duration_ms} мс)'
-            logger.info(msg)
+            logger.info(
+                '"%(full_request_line)s" %(status_code)s %(status_phrase)s (%(duration_ms)s мс)',
+                {
+                    "full_request_line": full_request_line,
+                    "status_code": status_code,
+                    "status_phrase": status_phrase,
+                    "duration_ms": duration_ms,
+                },
+            )
 
 
     @staticmethod
