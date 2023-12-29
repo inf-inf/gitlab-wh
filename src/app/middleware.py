@@ -45,11 +45,10 @@ class AccessLogMiddleware:
             raise
         finally:
             end_time = time.time()
-            level = self._get_level_by_status_code(status_code)
             duration_ms = int((end_time - start_time) * 1_000)
             status_phrase = http.HTTPStatus(status_code).phrase
             msg = f'"{full_request_line}" {status_code} {status_phrase} ({duration_ms} мс)'
-            logger.log(level=level, msg=msg)
+            logger.info(msg)
 
 
     @staticmethod
@@ -59,11 +58,3 @@ class AccessLogMiddleware:
         if scope["query_string"]:
             return f"{path_with_query_string}?{scope['query_string'].decode('ascii')}"
         return path_with_query_string
-
-    @staticmethod
-    def _get_level_by_status_code(status_code: int) -> int:
-        """Выбор loglevel в зависимости от статуса ответа.
-
-        Возможно, стоит отказаться от этого и логировать все с logging.INFO
-        """
-        return logging.ERROR if status_code >= 500 else logging.WARNING if 500 > status_code >= 400 else logging.INFO
