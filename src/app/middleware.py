@@ -25,7 +25,6 @@ class AccessLogMiddleware:
             await self.app(scope, receive, send)
             return
 
-        client_addr = self._get_client_addr(scope)
         full_path = self._get_path_with_query_string(scope)
         protocol = f"HTTP/{scope['http_version']}"
         method = scope["method"]
@@ -49,14 +48,8 @@ class AccessLogMiddleware:
             level = self._get_level_by_status_code(status_code)
             duration_ms = int((end_time - start_time) * 1_000)
             status_phrase = http.HTTPStatus(status_code).phrase
-            msg = f'{client_addr} - "{full_request_line}" {status_code} {status_phrase} ({duration_ms} мс)'
+            msg = f'"{full_request_line}" {status_code} {status_phrase} ({duration_ms} мс)'
             logger.log(level=level, msg=msg)
-
-    @staticmethod
-    def _get_client_addr(scope: Scope) -> str:
-        if scope["client"] is None:
-            return "-"
-        return f"{scope['client'][0]}:{scope['client'][1]}"
 
 
     @staticmethod
