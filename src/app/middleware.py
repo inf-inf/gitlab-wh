@@ -1,5 +1,6 @@
 import http
 import logging
+import time
 from urllib.parse import quote
 
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
@@ -37,15 +38,18 @@ class AccessLogMiddleware:
                 status_code = message["status"]
             await send(message)
 
+        start_time = time.time()
         try:
             await self.app(scope, receive, send_save_status)
         except Exception:
             status_code = 500
             raise
         finally:
+            end_time = time.time()
             level = self._get_level_by_status_code(status_code)
+            duration_ms = int((end_time - start_time) * 1_000)
             status_phrase = http.HTTPStatus(status_code).phrase
-            msg = f'{client_addr} - "{full_request_line}" {status_code} {status_phrase}'
+            msg = f'{client_addr} - "{full_request_line}" {status_code} {status_phrase} ({duration_ms} мс)'
             logger.log(level=level, msg=msg)
 
     @staticmethod
