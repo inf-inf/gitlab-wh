@@ -1,7 +1,11 @@
 from pathlib import Path
 
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware import Middleware
 from fastapi.staticfiles import StaticFiles
+
+from .exception_handlers import exception_handlers
+from .middleware import AccessLogMiddleware
 
 
 class GitLabWH:
@@ -31,6 +35,8 @@ class GitLabWH:
                 "filter": True,
                 "requestSnippetsEnabled": True,
             },
+            exception_handlers=exception_handlers,
+            middleware=[Middleware(AccessLogMiddleware)],
         )
         self._app.include_router(main_router)
         self._app.mount("/static", StaticFiles(directory=static_folder_path), name="static")

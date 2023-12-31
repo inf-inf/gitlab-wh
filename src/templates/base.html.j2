@@ -15,11 +15,16 @@
 </head>
 
 <body>
+    {% block body %}
+
     {% include 'elements/color_modes.html.j2' %}
     {% block content %}{% endblock %}
-    {% block body %}
+
+    {% block scripts %}
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/color-modes.js"></script>
+    {% endblock %}
+
     {% endblock %}
 </body>
 
