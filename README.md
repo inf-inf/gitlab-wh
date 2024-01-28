@@ -24,3 +24,8 @@ coverage run -m pytest tests/
 ```bash
 coverage report -m --skip-covered
 ```
+
+## Integration
+```bash
+./tests/integration_tests.sh
+```
