@@ -9,6 +9,7 @@ GITLAB_CONTAINERS=(
     gitlab/gitlab-ee:16.7.3-ee.0    gitlab_16.7
 )
 # # # # # #
+docker stop $(docker ps -a -q --filter name=gitlab)
 
 for i in ${!GITLAB_CONTAINERS[*]}; do
     [[ $((i % 2)) == 1 ]] && continue  # skip if i - odd number
@@ -66,7 +67,7 @@ for i in ${!GITLAB_CONTAINERS[*]}; do
             token.save!"
     fi
 
-    ROOT_PERSONAL_ACCESS_TOKEN=$ROOT_PERSONAL_ACCESS_TOKEN $PYTHON_PATH -m coverage run -m pytest "$TESTS_DIR"
+    ROOT_PERSONAL_ACCESS_TOKEN=$ROOT_PERSONAL_ACCESS_TOKEN $PYTHON_PATH -m coverage run -m pytest "$TESTS_DIR" -m integration
 
     docker stop "$DOCKER_NAME"
 done
