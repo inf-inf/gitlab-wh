@@ -64,6 +64,15 @@ max-args = 10
 [tool.ruff.pydocstyle]
 convention = "google"
 
+[tool.pytest.ini_options]
+markers = [
+    "integration: marks integration tests (deselect with '-m \"not integration\"')",
+]
+filterwarnings = [
+    "ignore: Inheritance class FakeClientSession from ClientSession is discouraged",
+]
+asyncio_mode = "auto"
+
 [tool.coverage.run]
 data_file = ".coverage/coverage"
 
