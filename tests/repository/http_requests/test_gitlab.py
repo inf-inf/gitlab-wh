@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from src.repository.http_requests.fake_http import FakeClientSession
-from src.repository.http_requests.gitlab import GitLabHTTP
+from src.repository.http_requests.gitlab import GitLabHTTPv4
 
 if TYPE_CHECKING:
     from aiohttp import ClientSession
@@ -53,7 +53,7 @@ class TestGitLabHTTP:
                          ) -> None:
         """Testing GitLabHTTP.check"""
         fake_client_session = FakeClientSession(**response_from_gitlab)
-        gitlab_http = GitLabHTTP(fake_client_session)
+        gitlab_http = GitLabHTTPv4(fake_client_session)
         assert await gitlab_http.check() is expected
 
 
@@ -64,7 +64,7 @@ class TestIntegrationGitLabHTTP:
     async def test_create_group(self, root_client_session: ClientSession) -> None:
         """Testing GitLabHTTP.create_group"""
         some_uuid = str(uuid4())
-        gitlab_http = GitLabHTTP(root_client_session)
+        gitlab_http = GitLabHTTPv4(root_client_session)
         group_id = await gitlab_http.create_group(some_uuid, some_uuid)
         groups = await gitlab_http.list_groups()
         assert group_id in (group["id"] for group in groups)

@@ -39,7 +39,7 @@ class UserModel(TypedDict):
     id: int
 
 
-class GitLabHTTP(BaseHTTP):
+class GitLabHTTPv4(BaseHTTP):
     """Запросы в GitLab API"""
     URL_PING = "/api/v4/projects"
     URL_ADD_USER_TO_GROUP = "/api/v4/groups/{group_id}/members"
