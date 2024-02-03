@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -9,8 +9,11 @@ if TYPE_CHECKING:
     from aiohttp import ClientSession
 
 
+T = TypeVar("T")
+
+
 @dataclass
-class ResponseModel:
+class ResponseModel(Generic[T]):
     """Модель Response, возвращаемая BaseHTTP
 
     Args:
@@ -18,7 +21,7 @@ class ResponseModel:
         status_code: статус код HTTP ответа
         headers: заголовки HTTP ответа
     """
-    data: dict[str, Any] | list[dict[str, Any]]
+    data: T
     status_code: int
     headers: Mapping[str, str]
 
@@ -33,7 +36,7 @@ class BaseHTTP:
                    url: str,
                    params: dict[str, Any] | None = None,
                    headers: dict[str, Any] | None = None,
-                   ) -> ResponseModel:
+                   ) -> ResponseModel[Any]:
         """Реализация GET запроса
 
         Args:
@@ -53,9 +56,9 @@ class BaseHTTP:
 
     async def _post(self,
                     url: str,
-                    data: dict[str, Any] | None = None,
+                    data: dict[str, Any],
                     headers: dict[str, Any] | None = None,
-                    ) -> ResponseModel:
+                    ) -> ResponseModel[Any]:
         """Реализация POST запроса
 
         Args:
@@ -75,9 +78,9 @@ class BaseHTTP:
 
     async def _put(self,
                    url: str,
-                   data: dict[str, Any] | None = None,
+                   data: dict[str, Any],
                    headers: dict[str, Any] | None = None,
-                   ) -> ResponseModel:
+                   ) -> ResponseModel[Any]:
         """Реализация PUT запроса
 
         Args:
@@ -97,9 +100,9 @@ class BaseHTTP:
 
     async def _patch(self,
                      url: str,
-                     data: dict[str, Any] | None = None,
+                     data: dict[str, Any],
                      headers: dict[str, Any] | None = None,
-                     ) -> ResponseModel:
+                     ) -> ResponseModel[Any]:
         """Реализация PATCH запроса
 
         Args:
@@ -121,7 +124,7 @@ class BaseHTTP:
                       url: str,
                       params: dict[str, Any] | None = None,
                       headers: dict[str, Any] | None = None,
-                      ) -> ResponseModel:
+                      ) -> ResponseModel[Any]:
         """Реализация DELETE запроса
 
         Args:
