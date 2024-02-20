@@ -325,6 +325,34 @@ class GitLabHTTPv4(BaseHTTP):
             }
         raise GitLabError(response.data)
 
+    async def get_user(self, user_id: int) -> GetUser | GetUserByAdmin:
+        """Получение пользователя
+
+        Single user - https://docs.gitlab.com/ee/api/users.html#single-user
+            For user - https://docs.gitlab.com/ee/api/users.html#for-user
+            For admin - https://docs.gitlab.com/ee/api/users.html#for-administrators-1
+
+        Args:
+            user_id: идентификатор пользователя
+
+        Returns:
+            Объект пользователя
+        """
+        # TODO: механизм корректного определения GetUser или GetUserByAdmin (без run-time проверки)
+        response: ResponseModel[GetUser | GetUserByAdmin] = await self._get(f"{self.URL_USERS}/{user_id}")
+        if response.status_code == HTTPStatus.OK:
+            return {
+                "id": response.data["id"],
+                "username": response.data["username"],
+                "name": response.data["name"],
+                "state": response.data["state"],
+                "locked": response.data["locked"],
+                "avatar_url": response.data["avatar_url"],
+                "web_url": response.data["web_url"],
+                "created_at": response.data["created_at"],
+            }
+        raise GitLabError(response.data)
+
 
         Args:
             min_access_level: уровень доступа
