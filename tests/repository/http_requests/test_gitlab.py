@@ -81,7 +81,6 @@ class TestIntegrationGitLabHTTP:
 
     async def test_create_group(self, root_client_session: ClientSession) -> None:
         """Testing GitLabHTTP.create_group"""
-        some_uuid = str(uuid4())
         gitlab_http = GitLabHTTPv4(root_client_session)
 
         group_name = group_path = str(uuid4())
