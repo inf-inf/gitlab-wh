@@ -9,17 +9,21 @@
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/color-modes.css" rel="stylesheet">
     <link href="/static/css/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/static/img/favicon.png" />
-    <link rel="apple-touch-icon" type="image/x-icon" href="/static/img/apple-touch-icon.png" />
+    <link rel="icon" href="/static/img/favicon.ico" />
     {% endblock %}
 </head>
 
 <body>
+    {% block body %}
+
     {% include 'elements/color_modes.html.j2' %}
     {% block content %}{% endblock %}
-    {% block body %}
+
+    {% block scripts %}
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/color-modes.js"></script>
+    {% endblock %}
+
     {% endblock %}
 </body>
 

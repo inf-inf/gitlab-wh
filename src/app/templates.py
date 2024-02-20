@@ -39,7 +39,7 @@ class CommonTemplateResponseGenerator:
 
     def generate_response(self,
                           name: str,
-                          context: dict[str, Any] | None = None,
+                          context: Mapping[str, Any] | None = None,
                           alert: Alert | None = None,
                           status_code: int = 200,
                           headers: Mapping[str, str] | None = None,
@@ -50,7 +50,7 @@ class CommonTemplateResponseGenerator:
 
         Args:
             name (str): имя файла шаблона
-            context (dict[str, Any] | None, optional): параметры для подставления в шаблон
+            context (Mapping[str, Any] | None, optional): параметры для подставления в шаблон
             alert (Alert, optional): уведомление для пользователя
             status_code (int, optional): Статус код ответа
             headers (Mapping[str, str] | None, optional): Хедеры ответа
