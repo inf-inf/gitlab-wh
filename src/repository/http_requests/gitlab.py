@@ -219,7 +219,7 @@ class GitLabHTTPv4(BaseHTTP):
             "only_allow_merge_if_all_discussions_are_resolved": only_allow_merge_if_all_discussions_are_resolved,
             "only_allow_merge_if_pipeline_succeeds": only_allow_merge_if_pipeline_succeeds,
         }
-        response: ResponseModel[ProjectModel] = await self._post(self.URL_PROJECTS, data)
+        response: ResponseModel[CreatedProject] = await self._post(self.URL_PROJECTS, data)
         if response.status_code == HTTPStatus.CREATED:
             return response.data["id"]
         raise GitLabError(response.data)
@@ -251,7 +251,7 @@ class GitLabHTTPv4(BaseHTTP):
             "email": email,
             "password": password,
         }
-        response: ResponseModel[UserModel] = await self._post(self.URL_USERS, data)
+        response: ResponseModel[CreatedUser] = await self._post(self.URL_USERS, data)
         if response.status_code == HTTPStatus.CREATED:
             return response.data["id"]
         raise GitLabError(response.data)
@@ -490,7 +490,7 @@ class GitLabHTTPv4(BaseHTTP):
             "user_id": user_id,
             "access_level": access_level,
         }
-        response: ResponseModel[UserModel] = await self._post(url, data)
+        response: ResponseModel[AddUserToProjectOrGroup] = await self._post(url, data)
         if response.status_code == HTTPStatus.CREATED:
             return response.data["id"]
         raise GitLabError(response.data)
@@ -518,7 +518,7 @@ class GitLabHTTPv4(BaseHTTP):
             "path": path,
             "parent_id": parent_id,
         }
-        response: ResponseModel[GroupModel] = await self._post(self.URL_GROUPS, data)
+        response: ResponseModel[Group] = await self._post(self.URL_GROUPS, data)
         if response.status_code == HTTPStatus.CREATED:
             return response.data["id"]
         raise GitLabError(response.data)
