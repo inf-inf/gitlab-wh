@@ -384,6 +384,24 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data
         raise GitLabError(response.data)
 
+    async def list_projects(self,
+                            *,
+                            order_by: ProjectsOrderBy = "created_at",
+                            sort: Sort = "desc",
+                            ) -> list[Project]:
+        """Получение списка всех доступных репозиториев
+
+        List all projects - https://docs.gitlab.com/ee/api/projects.html#list-all-projects
+
+        Args:
+            order_by: признак, по которому будут отсортированы репозитории
+            sort: сортировка по полю order_by должна быть asc или desc
+
+        Returns:
+            Список объектов репозитория
+        """
+        params = {"order_by": order_by, "sort": sort}
+        response: ResponseModel[list[Project]] = await self._get(self.URL_PROJECTS, params, by_pagination=True)
         if response.status_code == HTTPStatus.OK:
             return response.data
         raise GitLabError(response.data)
