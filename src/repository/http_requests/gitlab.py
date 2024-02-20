@@ -501,3 +501,34 @@ class GitLabHTTPv4(BaseHTTP):
         if response.status_code == HTTPStatus.CREATED:
             return response.data["id"]
         raise GitLabError(response.data)
+
+    async def _list_members(self,
+                            url: str,
+                            *,
+                            query: str | None = None,
+                            user_ids: list[int] | None = None,
+                            skip_users: list[int] | None = None,
+                            ) -> list[MemberUser]:
+        """Получение списка пользователей репозитория/группы
+
+        List all members of a group or project -
+            https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project
+
+        Args:
+            url: сформированный URL для запроса членов группы или репозитория
+            query: поле для фильтрации пользователей (судя по всему фильтрация по username пользователя)
+            user_ids: фильтрация пользователей, id которых есть среди user_ids
+            skip_users: пропустить пользователей, id которых есть среди skip_users
+
+        Returns:
+            Список пользователей репозитория/группы
+        """
+        params = {
+            "query": query,
+            "user_ids": user_ids,
+            "skip_users": skip_users,
+        }
+        response: ResponseModel[list[MemberUser]] = await self._get(url, params=params, by_pagination=True)
+        if response.status_code == HTTPStatus.OK:
+            return response.data
+        raise GitLabError(response.data)
