@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+from datetime import date, timedelta
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Any
 
@@ -238,8 +240,38 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data["id"]
         raise GitLabError(response.data)
 
-    async def list_groups(self, min_access_level: AccessLevel = 10) -> list[GroupModel]:
-        """Получение списка всех доступных групп, к которым уровень доступа не меньше min_access_level
+    async def create_personal_access_token(self,
+                                           user_id: int,
+                                           name: str,
+                                           scopes: list[AccessTokenScopes],
+                                           expires_at: date | None = None,
+                                           ) -> str:
+        """Создание Personal Access Token для пользователя
+
+        ВНИМАНИЕ! Только с токеном администратора (Admin token only)
+
+        Create a personal access token - https://docs.gitlab.com/ee/api/users.html#create-a-personal-access-token
+
+        Args:
+            user_id: идентификатор пользователя
+            name: наименование токена доступа
+            scopes: список разрешенных действий для токена
+            expires_at: время, когда токен истечет
+
+        Returns:
+            Созданный Personal Access Token для пользователя с id=user_id
+        """
+        url = self.URL_PERSONAL_ACCESS_TOKEN.format(user_id=user_id)
+        data = {
+            "name": name,
+            "scopes": scopes,
+            "expires_at": str(expires_at or date.today() + timedelta(days=364)),
+        }
+        response: ResponseModel[CreatedPersonalAccessToken] = await self._post(url, data)
+        if response.status_code == HTTPStatus.CREATED:
+            return response.data["token"]
+        raise GitLabError(response.data)
+
 
         Args:
             min_access_level: уровень доступа
