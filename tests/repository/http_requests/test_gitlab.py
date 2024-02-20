@@ -151,3 +151,19 @@ class TestIntegrationGitLabHTTP:
         group_members = await gitlab_http.list_group_members(group_id, user_ids=[user_id])
         assert user_id == group_members[0]["id"]
 
+    async def test_add_user_to_project(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.add_user_to_project"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        user_name = user_username = str(uuid4())
+        some_uuid_password = str(uuid4())
+        email = user_username + "@example.com"
+        user_id = await gitlab_http.create_user(user_name, user_username, email, some_uuid_password)
+
+        project_name = project_path = str(uuid4())
+        project_id = await gitlab_http.create_project(project_name, project_path)
+
+        await gitlab_http.add_user_to_project(project_id, user_id, 40)
+
+        project_members = await gitlab_http.list_project_members(project_id, user_ids=[user_id])
+        assert user_id == project_members[0]["id"]
