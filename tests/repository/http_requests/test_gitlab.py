@@ -117,3 +117,20 @@ class TestIntegrationGitLabHTTP:
         assert user_username == user_from_gitlab["username"]
         assert user_name == user_from_gitlab["name"]
 
+    async def test_create_personal_access_token(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_personal_access_token"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        user_name = user_username = access_token_name = str(uuid4())
+        some_uuid_password = str(uuid4())
+        email = user_username + "@example.com"
+        user_id = await gitlab_http.create_user(user_name, user_username, email, some_uuid_password)
+
+        personal_access_token = await gitlab_http.create_personal_access_token(user_id, access_token_name, ["api"])
+
+        _gen_gitlab_http = self._create_new_gitlab_http(personal_access_token)
+        new_gitlab_http = await anext(_gen_gitlab_http)
+        users_personal_access_tokens = await new_gitlab_http.list_personal_access_tokens(search=access_token_name)
+        assert len(users_personal_access_tokens) == 1
+        assert users_personal_access_tokens[0]["name"] == access_token_name
+
