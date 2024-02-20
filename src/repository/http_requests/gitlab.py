@@ -406,6 +406,29 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data
         raise GitLabError(response.data)
 
+    async def list_group_members(self,
+                                 group_id: int,
+                                 *,
+                                 query: str | None = None,
+                                 user_ids: list[int] | None = None,
+                                 skip_users: list[int] | None = None,
+                                 ) -> list[MemberUser]:
+        """Получение списка пользователей группы
+
+        List all members of a group - https://docs.gitlab.com/ee/api/members.html#list-all-members-of-a-group-or-project
+
+        Args:
+            group_id: id группы GitLab, список пользователей которых хотим узнать
+            query: поле для фильтрации пользователей (судя по всему фильтрация по username пользователя)
+            user_ids: фильтрация пользователей, id которых есть среди user_ids
+            skip_users: пропустить пользователей, id которых есть среди skip_users
+
+        Returns:
+            Список пользователей, которые принадлежат группе с group_id
+        """
+        url = self.URL_GROUP_MEMBERS.format(group_id=group_id)
+        return await self._list_members(url, query=query, user_ids=user_ids, skip_users=skip_users)
+
     async def _add_user(self,
                         url: str,
                         user_id: int,
