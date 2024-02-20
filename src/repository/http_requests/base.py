@@ -67,7 +67,7 @@ class BaseHTTP:
             headers: заголовки для POST запроса
 
         Returns:
-            Результат POST запроса (JSON в виде словаря)
+            Результат POST запроса
         """
         async with self._session.post(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -89,7 +89,7 @@ class BaseHTTP:
             headers: заголовки для PUT запроса
 
         Returns:
-            Результат PUT запроса (JSON в виде словаря)
+            Результат PUT запроса
         """
         async with self._session.put(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -111,7 +111,7 @@ class BaseHTTP:
             headers: заголовки для PATCH запроса
 
         Returns:
-            Результат PATCH запроса (JSON в виде словаря)
+            Результат PATCH запроса
         """
         async with self._session.patch(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -133,7 +133,7 @@ class BaseHTTP:
             headers: заголовки для DELETE запроса
 
         Returns:
-            Результат DELETE запроса (JSON в виде словаря)
+            Результат DELETE запроса
         """
         async with self._session.delete(url, params=params, headers=headers) as response:
             return ResponseModel(
