@@ -353,15 +353,37 @@ class GitLabHTTPv4(BaseHTTP):
             }
         raise GitLabError(response.data)
 
+    async def list_groups(self,
+                          *,
+                          search: str | None = None,
+                          order_by: GroupsOrderBy = "name",
+                          sort: Sort = "asc",
+                          min_access_level: AccessLevel = 10,
+                          ) -> list[Group]:
+        """Получение списка всех доступных групп
+
+        List groups - https://docs.gitlab.com/ee/api/groups.html#list-groups
 
         Args:
+            search: поле для фильтрации групп (судя по всему фильтр используется по имени групп)
+            order_by: признак, по которому будут отсортированы группы
+            sort: сортировка по полю order_by должна быть asc или desc
             min_access_level: уровень доступа
 
         Returns:
-            список групп, удовлетворяющих условию, что уровень доступа к ним >= чем min_access_level
+            Список объектов группы
         """
-        params = {"min_access_level": min_access_level}
-        response: ResponseModel[list[GroupModel]] = await self._get(self.URL_GROUPS, params)
+        params = {
+            "search": search,
+            "order_by": order_by,
+            "sort": sort,
+            "min_access_level": min_access_level,
+        }
+        response: ResponseModel[list[Group]] = await self._get(self.URL_GROUPS, params, by_pagination=True)
+        if response.status_code == HTTPStatus.OK:
+            return response.data
+        raise GitLabError(response.data)
+
         if response.status_code == HTTPStatus.OK:
             return response.data
         raise GitLabError(response.data)
