@@ -272,6 +272,36 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data["token"]
         raise GitLabError(response.data)
 
+    async def list_personal_access_tokens(self,
+                                          search: str | None = None,
+                                          revoked: bool | None = None,
+                                          state: State | None = None,
+                                          ) -> list[PersonalAccessToken]:
+        """Получения списка всех Personal Access Token для пользователя
+
+        List personal access tokens -
+            https://docs.gitlab.com/ee/api/personal_access_tokens.html#list-personal-access-tokens
+
+        Args:
+            search: поле для фильтрации токена доступа (судя по всему фильтр используется по имени токена)
+            revoked: True - найти только отозванные токены, False - найти все действующие токены
+            state: состояние токена (активен или неактивен)
+
+        Returns:
+            Список объектов Personal Access Token для пользователя
+        """
+        params = {
+            "search": search,
+            "revoked": revoked,
+            "state": state,
+        }
+        response: ResponseModel[list[PersonalAccessToken]] = await self._get(self.URL_ALL_PERSONAL_ACCESS_TOKEN,
+                                                                             params,
+                                                                             by_pagination=True)
+        if response.status_code == HTTPStatus.OK:
+            return response.data
+        raise GitLabError(response.data)
+
 
         Args:
             min_access_level: уровень доступа
