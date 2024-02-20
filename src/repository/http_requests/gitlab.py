@@ -47,6 +47,63 @@ class GitLabHTTPv4(BaseHTTP):
     URL_GROUPS = "/api/v4/groups"
     URL_PROJECTS = "/api/v4/projects"
     URL_USERS = "/api/v4/users"
+    async def _offset_pagination(self,
+                                 url: str,
+                                 params: dict[str, Any],
+                                 headers: dict[str, Any] | None = None,
+                                 *,
+                                 page: int,
+                                 ) -> list[dict[str, Any]]:
+        """GET запрос для пагинации с использованием offset'ов
+
+        GitLab offset-based pagination - https://docs.gitlab.com/ee/api/rest/index.html#offset-based-pagination
+
+        Args:
+            url: URL-адрес для GET запроса
+            params: словарь ключей и их значений для GET запроса
+            headers: заголовки для GET запроса
+            page: номер следующей возвращаемой страницы
+
+        Returns:
+            Тело ответа на один GET запрос
+        """
+        params["page"] = page
+        async with self._session.get(url, params=params, headers=headers) as response:
+            res: list[dict[str, Any]] = await response.json()
+            return res
+
+    async def _by_pagination(self,
+                             url: str,
+                             params: dict[str, Any] | None = None,
+                             headers: dict[str, Any] | None = None,
+                             ) -> ResponseModel[Any]:
+        """Получение всех записей (множество GET запросов) с использованием пагинаций
+
+        GitLab paginations - https://docs.gitlab.com/ee/api/rest/index.html#pagination
+
+        Args:
+            url: URL-адрес для GET запроса
+            params: словарь ключей и их значений для GET запроса
+            headers: заголовки для GET запроса
+
+        Returns:
+            Агрегированный результат множества GET запросов (агрегация пагинаций),
+            где статус код и заголовки будут от самого 1-го запроса в пачке
+        """
+        params = params or {}
+        params["per_page"] = 100
+        params["page"] = 1
+
+        first_response = await self._get_one(url, params, headers)
+
+        total_pages = first_response.headers["X-Total-Pages"]
+        tasks = [self._offset_pagination(url, params, headers, page=page) for page in range(2, int(total_pages) + 1)]
+        results = await asyncio.gather(*tasks)
+        return ResponseModel(
+            data=sum(results, first_response.data),
+            status_code=first_response.status_code,
+            headers=first_response.headers,
+        )
 
     async def check(self) -> bool:
         """Проверка доступности GitLab API
