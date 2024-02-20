@@ -104,6 +104,8 @@ class GitLabHTTPv4(BaseHTTP):
     async def check(self) -> bool:
         """Проверка доступности GitLab API
 
+        List all projects - https://docs.gitlab.com/ee/api/projects.html#list-all-projects
+
         Returns:
             True - GitLab доступен, False - GitLab недоступен
         """
@@ -117,13 +119,15 @@ class GitLabHTTPv4(BaseHTTP):
                                 ) -> int:
         """Добавление пользователя к группе GitLab
 
+        Add a member to a group - https://docs.gitlab.com/ee/api/members.html#add-a-member-to-a-group-or-project
+
         Args:
             group_id: идентификатор группы
             user_id: идентификатор пользователя
             access_level: уровень доступа
 
         Returns:
-            идентификатор добавленного пользователя
+            Идентификатор добавленного пользователя
         """
         url = self.URL_ADD_USER_TO_GROUP.format(group_id=group_id)
         return await self._add_user(url, user_id, access_level)
@@ -135,13 +139,15 @@ class GitLabHTTPv4(BaseHTTP):
                                   ) -> int:
         """Добавление пользователя к репозиторию GitLab
 
+        Add a member to a project - https://docs.gitlab.com/ee/api/members.html#add-a-member-to-a-group-or-project
+
         Args:
             project_id: идентификатор репозитория
             user_id: идентификатор пользователя
             access_level: уровень доступа
 
         Returns:
-            идентификатор добавленного пользователя
+            Идентификатор добавленного пользователя
         """
         url = self.URL_ADD_USER_TO_PROJECT.format(project_id=project_id)
         return await self._add_user(url, user_id, access_level)
@@ -152,12 +158,14 @@ class GitLabHTTPv4(BaseHTTP):
                            ) -> int:
         """Создание группы в GitLab
 
+        New group - https://docs.gitlab.com/ee/api/groups.html#new-group
+
         Args:
             name: наименование новой группы
             path: путь до новой группы
 
         Returns:
-            идентификатор созданной группы
+            Идентификатор созданной группы
         """
         return await self._create_group(name, path)
 
@@ -168,13 +176,15 @@ class GitLabHTTPv4(BaseHTTP):
                               ) -> int:
         """Создание подгруппы в GitLab
 
+        New subgroup - https://docs.gitlab.com/ee/api/groups.html#new-subgroup
+
         Args:
             name: наименование новой подгруппы
             path: путь до новой подгруппы
             parent_id: идентификатор родительской группы
 
         Returns:
-            идентификатор созданной подгруппы
+            Идентификатор созданной подгруппы
         """
         return await self._create_group(name, path, parent_id)
 
@@ -188,6 +198,8 @@ class GitLabHTTPv4(BaseHTTP):
                              ) -> int:
         """Создание репозитория в GitLab
 
+        Create project - https://docs.gitlab.com/ee/api/projects.html#create-project
+
         Args:
             name: наименование нового репозитория
             path: путь до нового репозитория
@@ -198,7 +210,7 @@ class GitLabHTTPv4(BaseHTTP):
                 сливать MR и при fail pipeline
 
         Returns:
-            идентификатор созданного репозитория
+            Идентификатор созданного репозитория
         """
         data = {
             "name": name,
@@ -220,6 +232,10 @@ class GitLabHTTPv4(BaseHTTP):
                           ) -> int:
         """Создание пользователя в GitLab
 
+        ВНИМАНИЕ! Только с токеном администратора (Admin token only)
+
+        User creation - https://docs.gitlab.com/ee/api/users.html#user-creation
+
         Args:
             name: имя нового пользователя
             username: псевдоним(nickname) нового пользователя
@@ -227,7 +243,7 @@ class GitLabHTTPv4(BaseHTTP):
             password: пароль для нового пользователя
 
         Returns:
-            идентификатор созданного пользователя
+            Идентификатор созданного пользователя
         """
         data = {
             "name": name,
@@ -460,13 +476,15 @@ class GitLabHTTPv4(BaseHTTP):
                         ) -> int:
         """Добавление пользователя к группе/репозиторию в GitLab
 
+        Add a member to a project/group - https://docs.gitlab.com/ee/api/members.html#add-a-member-to-a-group-or-project
+
         Args:
             url: сформированный url GitLab API для добавления пользователя к группе/репозиторию в GitLab
             user_id: идентификатор пользователя
             access_level: уровень доступа
 
         Returns:
-            идентификатор добавленного пользователя
+            Идентификатор добавленного пользователя
         """
         data = {
             "user_id": user_id,
@@ -484,13 +502,16 @@ class GitLabHTTPv4(BaseHTTP):
                             ) -> int:
         """Создание группы/подгруппы в GitLab
 
+        New group - https://docs.gitlab.com/ee/api/groups.html#new-group
+        New subgroup - https://docs.gitlab.com/ee/api/groups.html#new-subgroup
+
         Args:
             name: наименование новой группы/подгруппы
             path: путь до новой группы/подгруппы
             parent_id: идентификатор родительской группы (если создается подгруппа)
 
         Returns:
-            идентификатор созданной группы/подгруппы
+            Идентификатор созданной группы/подгруппы
         """
         data = {
             "name": name,
