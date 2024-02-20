@@ -103,3 +103,17 @@ class TestIntegrationGitLabHTTP:
         assert subgroup["parent_id"] == parent_group_id
         assert subgroup["full_path"] == f"{group_name}/subgroup"
 
+    async def test_create_user(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_user"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        user_name = user_username = str(uuid4())
+        some_uuid_password = str(uuid4())
+        email = user_username + "@example.com"
+        user_id = await gitlab_http.create_user(user_name, user_username, email, some_uuid_password)
+
+        user_from_gitlab = await gitlab_http.get_user(user_id)
+        assert user_id == user_from_gitlab["id"]
+        assert user_username == user_from_gitlab["username"]
+        assert user_name == user_from_gitlab["name"]
+
