@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import uuid4
 
 import pytest
+from aiohttp import ClientSession
 
 from src.repository.http_requests.fake_http import FakeClientSession
 from src.repository.http_requests.gitlab import GitLabHTTPv4
@@ -61,8 +62,13 @@ class TestGitLabHTTP:
 @pytest.mark.asyncio()
 class TestIntegrationGitLabHTTP:
     """Integration testing class GitLabHTTP"""
-    @pytest.mark.asyncio()
-    @pytest.mark.integration()
+
+    async def _create_new_gitlab_http(self, personal_access_token: str) -> AsyncGenerator[GitLabHTTPv4, None]:
+        """Возвращает новый экземпляр GitLabHTTPv4 с PRIVATE-TOKEN == personal_access_token"""
+        headers = {"PRIVATE-TOKEN": personal_access_token}
+        async with ClientSession("http://localhost", headers=headers) as client_session:
+            yield GitLabHTTPv4(client_session)
+
     async def test_create_project(self, root_client_session: ClientSession) -> None:
         """Testing GitLabHTTP.create_project"""
         gitlab_http = GitLabHTTPv4(root_client_session)
