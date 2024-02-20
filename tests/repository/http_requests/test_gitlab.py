@@ -83,7 +83,10 @@ class TestIntegrationGitLabHTTP:
         """Testing GitLabHTTP.create_group"""
         some_uuid = str(uuid4())
         gitlab_http = GitLabHTTPv4(root_client_session)
-        group_id = await gitlab_http.create_group(some_uuid, some_uuid)
+
+        group_name = group_path = str(uuid4())
+        group_id = await gitlab_http.create_group(group_name, group_path)
+
         groups = await gitlab_http.list_groups()
         assert group_id in (group["id"] for group in groups)
 
