@@ -86,3 +86,20 @@ class TestIntegrationGitLabHTTP:
         group_id = await gitlab_http.create_group(some_uuid, some_uuid)
         groups = await gitlab_http.list_groups()
         assert group_id in (group["id"] for group in groups)
+
+    async def test_create_subgroup(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_subgroup"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        group_name = group_path = str(uuid4())
+        parent_group_id = await gitlab_http.create_group(group_name, group_path)
+
+        subgroup_id = await gitlab_http.create_subgroup("subgroup", "subgroup", parent_group_id)
+
+        parent_group, subgroup = await gitlab_http.list_groups(search=group_name, order_by="id")
+        assert parent_group["id"] == parent_group_id
+        assert parent_group["parent_id"] is None
+        assert subgroup["id"] == subgroup_id
+        assert subgroup["parent_id"] == parent_group_id
+        assert subgroup["full_path"] == f"{group_name}/subgroup"
+
