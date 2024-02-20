@@ -302,6 +302,29 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data
         raise GitLabError(response.data)
 
+    async def get_current_user(self) -> GetCurrentUser | GetCurrentUserByAdmin:
+        """Получение информации по текущему пользователю
+
+        List current user - https://docs.gitlab.com/ee/api/users.html#list-current-user
+
+        Returns:
+            Объект пользователя
+        """
+        # TODO: механизм корректного определения GetCurrentUser или GetCurrentUserByAdmin (без run-time проверки)
+        response: ResponseModel[GetCurrentUser | GetCurrentUserByAdmin] = await self._get(self.URL_USER)
+        if response.status_code == HTTPStatus.OK:
+            return {
+                "id": response.data["id"],
+                "username": response.data["username"],
+                "name": response.data["name"],
+                "state": response.data["state"],
+                "locked": response.data["locked"],
+                "avatar_url": response.data["avatar_url"],
+                "web_url": response.data["web_url"],
+                "created_at": response.data["created_at"],
+            }
+        raise GitLabError(response.data)
+
 
         Args:
             min_access_level: уровень доступа
