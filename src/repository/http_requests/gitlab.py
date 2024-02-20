@@ -1,42 +1,29 @@
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import Literal, TypedDict
+from typing import TYPE_CHECKING, Any
 
 from .base import BaseHTTP, ResponseModel
 
-AccessLevel = Literal[0, 5, 10, 20, 30, 40, 50]
+if TYPE_CHECKING:
+    from src.types import Sort, State
+    from src.types.group import Group, GroupsOrderBy
+    from src.types.personal_access_token import AccessTokenScopes, CreatedPersonalAccessToken, PersonalAccessToken
+    from src.types.project import CreatedProject, Project, ProjectsOrderBy
+    from src.types.user import (
+        AccessLevel,
+        AddUserToProjectOrGroup,
+        CreatedUser,
+        GetCurrentUser,
+        GetCurrentUserByAdmin,
+        GetUser,
+        GetUserByAdmin,
+        MemberUser,
+    )
 
 
 class GitLabError(Exception):
     """Базовый exception для GitLabHTTP"""
-
-
-class GroupModel(TypedDict):
-    """Модель описывающая группу в GitLab
-
-    Args:
-        id: идентификатор группы
-    """
-    id: int
-
-
-class ProjectModel(TypedDict):
-    """Модель описывающая репозиторий в GitLab
-
-    Args:
-        id: идентификатор репозитория
-    """
-    id: int
-
-
-class UserModel(TypedDict):
-    """Модель описывающая пользователя в GitLab
-
-    Args:
-        id: идентификатор пользователя
-    """
-    id: int
 
 
 class GitLabHTTPv4(BaseHTTP):
