@@ -9,7 +9,7 @@ from src.repository.http_requests.fake_http import FakeClientSession
 from src.repository.http_requests.gitlab import GitLabHTTPv4
 
 if TYPE_CHECKING:
-    from aiohttp import ClientSession
+    from collections.abc import AsyncGenerator
 
 
 class TestGitLabHTTP:
@@ -57,10 +57,22 @@ class TestGitLabHTTP:
         assert await gitlab_http.check() is expected
 
 
+@pytest.mark.integration()
+@pytest.mark.asyncio()
 class TestIntegrationGitLabHTTP:
     """Integration testing class GitLabHTTP"""
     @pytest.mark.asyncio()
     @pytest.mark.integration()
+    async def test_create_project(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_project"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        project_name = project_path = str(uuid4())
+        project_id = await gitlab_http.create_project(project_name, project_path)
+
+        projects = await gitlab_http.list_projects()
+        assert project_id in (project["id"] for project in projects)
+
     async def test_create_group(self, root_client_session: ClientSession) -> None:
         """Testing GitLabHTTP.create_group"""
         some_uuid = str(uuid4())
