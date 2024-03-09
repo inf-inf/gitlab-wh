@@ -8,4 +8,4 @@ RUN pip install -r /app/requirements.txt --no-cache-dir
 
 COPY ./app /app
 
-ENTRYPOINT ["python", "/app/main2.py"]
+ENTRYPOINT ["python", "/app/main.py"]
