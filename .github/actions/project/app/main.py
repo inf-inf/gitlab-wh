@@ -319,6 +319,9 @@ async def main() -> None:
             mutation = generate_mutation(MUTATION_UPDATE_PROJECT_ITEM, data)
             await graphql_request(client_session, graphql_url, mutation)
 
+            msg = f"{result['field_current_value']} -> {new_status_value_info['field_value']}"
+            logging.info(msg)
+
 
 if __name__ == "__main__":
     # local debugging
