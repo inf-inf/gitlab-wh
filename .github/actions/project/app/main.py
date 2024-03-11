@@ -1,10 +1,11 @@
+import asyncio
 import logging
 import os
 import re
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any, Literal
 
-import requests
+import aiohttp
 
 Action = Literal[
     # pull_request
@@ -43,24 +44,97 @@ State = Literal[
     "dismissed",
 ]
 
+QUERY_ISSUE_BY_PR = """
+{
+    repository(name: "{repo_name}", owner: "{repo_owner}") {
+        pullRequest(number: {pull_request_id}) {
+            closingIssuesReferences(first: 100) {
+                totalCount
+                nodes {
+                    id
+                    title
+                    number
+                    projectItems(first: 100) {
+                        nodes {
+                            id
+                            fieldValueByName(name: "Status") {
+                                ... on ProjectV2ItemFieldSingleSelectValue {
+                                    id
+                                    name
+                                    optionId
+                                }
+                            }
+                            project {
+                                id
+                                field(name: "Status") {
+                                    ... on ProjectV2SingleSelectField {
+                                        id
+                                        name
+                                        options {
+                                            id
+                                            name
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+"""
 
-def graphql_request(graphql_url: str, query: str, auth_token: str) -> dict[str, Any]:
+MUTATION_UPDATE_PROJECT_ITEM = """
+mutation {
+    updateProjectV2ItemFieldValue(
+        input: {
+            projectId: "{project_hash_id}",
+            itemId: "{item_hash_id}",
+            fieldId: "{field_hash_id}",
+            value: {
+                singleSelectOptionId : "{field_value_hash_id}"
+            }
+        }
+    ) {
+        clientMutationId
+    }
+}
+"""
+
+
+async def create_client_session(auth_token: str) -> AsyncGenerator[aiohttp.ClientSession, None]:
+    """Создает aiohttp.ClientSession
+
+    Args:
+        auth_token: авторизационный токен к GitHub API
+
+    """
+    headers = {"Authorization": f"Bearer {auth_token}"}
+    async with aiohttp.ClientSession(headers=headers) as session:
+        yield session
+
+
+async def graphql_request(client_session: aiohttp.ClientSession,
+                          graphql_url: str,
+                          query: str,
+                          ) -> dict[str, Any]:
     """Запрос в GraphQL API
 
     Args:
+        client_session: aiohttp сессия для HTTP запросов
         graphql_url: GitHub GraphQL API URL
         query: GraphQL запрос
-        auth_token: авторизационный токен к GitHub API
 
     Returns:
         Ответ GitHub API на запрос
     """
-    headers = {"Authorization": f"Bearer {auth_token}"}
     data = {"query": query}
-    resp = requests.post(graphql_url, headers=headers, json=data, timeout=10)
-    resp_json = resp.json()
-    logging.info(resp_json)
-    return resp_json
+    async with client_session.post(graphql_url, json=data) as response:
+        resp_json: dict[str, Any] = await response.json()
+        logging.info(resp_json)
+        return resp_json
 
 
 def generate_query(query_template: str, data: dict[str, str]) -> str:
@@ -185,7 +259,7 @@ def define_new_status(pr_action: Action,
                       pr_state: State,
                       current_status: str | None,
                       field_options: dict[str, str],
-                      ) -> str:
+                      ) -> dict[str, str]:
     """Логика определения нового статуса для задачи
 
     Args:
@@ -206,76 +280,15 @@ def define_new_status(pr_action: Action,
     elif pr_state == "dismissed":
         status = "Review"
     else:
-        status = current_status
+        status = current_status or "Todo"
     return {"field_value_hash_id": field_options[status], "field_value": status}
 
 
-query_issue_by_pr = """
-{
-    repository(name: "{repo_name}", owner: "{repo_owner}") {
-        pullRequest(number: {pull_request_id}) {
-            closingIssuesReferences(first: 100) {
-                totalCount
-                nodes {
-                    id
-                    title
-                    number
-                    projectItems(first: 100) {
-                        nodes {
-                            id
-                            fieldValueByName(name: "Status") {
-                                ... on ProjectV2ItemFieldSingleSelectValue {
-                                    id
-                                    name
-                                    optionId
-                                }
-                            }
-                            project {
-                                id
-                                field(name: "Status") {
-                                    ... on ProjectV2SingleSelectField {
-                                        id
-                                        name
-                                        options {
-                                            id
-                                            name
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-"""
-
-mutation_update_project_item = """
-mutation {
-    updateProjectV2ItemFieldValue(
-        input: {
-            projectId: "{project_hash_id}",
-            itemId: "{item_hash_id}",
-            fieldId: "{field_hash_id}",
-            value: {
-                singleSelectOptionId : "{field_value_hash_id}"
-            }
-        }
-    ) {
-        clientMutationId
-    }
-}
-"""
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
+async def main() -> None:
+    """Запуск логики обновления статуса проекта"""
     auth_token: str = os.environ["INPUT_PROJECT_TOKEN"]
-    pr_action: Action = os.environ["INPUT_PR_ACTION"]
-    pr_state: State = os.environ["INPUT_PR_ACTION"]
+    pr_action: Action = os.environ["INPUT_PR_ACTION"]  # type: ignore[assignment]
+    pr_state: State = os.environ["INPUT_PR_STATE"]  # type: ignore[assignment]
 
     graphql_url: str = os.environ["GITHUB_GRAPHQL_URL"]
 
@@ -285,8 +298,11 @@ if __name__ == "__main__":
         "pull_request_id": os.environ["GITHUB_REF_NAME"].split("/")[0],
     }
 
-    query = generate_query(query_issue_by_pr, data)
-    resp_json = graphql_request(graphql_url, query, auth_token)
+    _client_session_generator = create_client_session(auth_token)
+    client_session = await anext(_client_session_generator)
+
+    query = generate_query(QUERY_ISSUE_BY_PR, data)
+    resp_json = await graphql_request(client_session, graphql_url, query)
 
     for result in parse_query_results(resp_json):
         new_status_value_info = define_new_status(
@@ -300,5 +316,15 @@ if __name__ == "__main__":
                 "project_hash_id": result["project_hash_id"],
                 "field_value_hash_id": new_status_value_info["field_value_hash_id"],
             }
-            mutation = generate_mutation(mutation_update_project_item, data)
-            graphql_request(graphql_url, mutation, auth_token)
+            mutation = generate_mutation(MUTATION_UPDATE_PROJECT_ITEM, data)
+            await graphql_request(client_session, graphql_url, mutation)
+
+
+if __name__ == "__main__":
+    # local debugging
+    # XXX from dotenv import load_dotenv
+    # XXX load_dotenv()
+
+    logging.basicConfig(level=logging.INFO)
+
+    asyncio.run(main())
