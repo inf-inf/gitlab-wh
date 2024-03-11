@@ -2,9 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY ./app/requirements.txt .
+COPY ./pyproject.toml .
 
-RUN pip install -r /app/requirements.txt --no-cache-dir
+RUN pip install . --no-cache-dir && pip uninstall -y project-action
 
 COPY ./app /app
 
