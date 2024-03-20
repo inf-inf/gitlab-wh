@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: KsQRooW/update-project-status
+      - uses: KsQRooW/update-project-status@main
         with:
           project_token: ${{ secrets.PROJECT_TOKEN }}
           pr_action: ${{ github.event.action }}
