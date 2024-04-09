@@ -182,3 +182,16 @@ class TestIntegrationGitLabHTTP:
         list_project_access_tokens = await gitlab_http.list_project_access_tokens(project_id)
         assert len(list_project_access_tokens) == 1
         assert list_project_access_tokens[0]["name"] == access_token_name
+
+    async def test_create_group_access_token(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_group_access_token"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        group_name = group_path = access_token_name = str(uuid4())
+        group_id = await gitlab_http.create_group(group_name, group_path)
+
+        await gitlab_http.create_group_access_token(group_id, access_token_name, ["api"], 30)
+
+        list_group_access_tokens = await gitlab_http.list_group_access_tokens(group_id)
+        assert len(list_group_access_tokens) == 1
+        assert list_group_access_tokens[0]["name"] == access_token_name
