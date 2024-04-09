@@ -169,3 +169,16 @@ class TestIntegrationGitLabHTTP:
 
         project_members = await gitlab_http.list_project_members(project_id, user_ids=[user_id])
         assert user_id == project_members[0]["id"]
+
+    async def test_create_project_access_token(self, root_client_session: ClientSession) -> None:
+        """Testing GitLabHTTP.create_project_access_token"""
+        gitlab_http = GitLabHTTPv4(root_client_session)
+
+        project_name = project_path = access_token_name = str(uuid4())
+        project_id = await gitlab_http.create_project(project_name, project_path)
+
+        await gitlab_http.create_project_access_token(project_id, access_token_name, ["api"], 30)
+
+        list_project_access_tokens = await gitlab_http.list_project_access_tokens(project_id)
+        assert len(list_project_access_tokens) == 1
+        assert list_project_access_tokens[0]["name"] == access_token_name
