@@ -44,6 +44,8 @@ class GitLabHTTPv4(BaseHTTP):
     URL_ALL_PERSONAL_ACCESS_TOKEN = "/api/v4/personal_access_tokens"  # noqa: S105
     URL_GROUP_MEMBERS = URL_ADD_USER_TO_GROUP
     URL_PROJECT_MEMBERS = URL_ADD_USER_TO_PROJECT
+    URL_PROJECT_ACCESS_TOKEN = "/api/v4/projects/{project_id}/access_tokens"  # noqa: S105
+    URL_GROUP_ACCESS_TOKEN = "/api/v4/groups/{group_id}/access_tokens"  # noqa: S105
 
     async def _offset_pagination(self,
                                  url: str,
