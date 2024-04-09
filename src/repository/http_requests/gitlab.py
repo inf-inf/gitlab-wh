@@ -356,6 +356,30 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data["token"]
         raise GitLabError(response.data)
 
+    async def list_project_access_tokens(self, project_id: int) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Project Access Token для репозитория
+
+        Args:
+            project_id: id репозитория GitLab
+
+        Returns:
+            Список Access Token'ов репозитория
+        """
+        url = self.URL_PROJECT_ACCESS_TOKEN.format(project_id=project_id)
+        return await self._list_access_tokens(url)
+
+    async def list_group_access_tokens(self, group_id: int) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Group Access Token для группы
+
+        Args:
+            group_id: id группы GitLab
+
+        Returns:
+            Список Access Token'ов группы
+        """
+        url = self.URL_GROUP_ACCESS_TOKEN.format(group_id=group_id)
+        return await self._list_access_tokens(url)
+
     async def list_personal_access_tokens(self,
                                           search: str | None = None,
                                           revoked: bool | None = None,
@@ -618,6 +642,20 @@ class GitLabHTTPv4(BaseHTTP):
             "skip_users": skip_users,
         }
         response: ResponseModel[list[MemberUser]] = await self._get(url, params=params, by_pagination=True)
+        if response.status_code == HTTPStatus.OK:
+            return response.data
+        raise GitLabError(response.data)
+
+    async def _list_access_tokens(self, url: str) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Project Access Token для репозитория или Group Access Token для группы
+
+        Args:
+            url: сформированный URL для запроса Access Token'ов группы или репозитория
+
+        Returns:
+            Список Access Token'ов группы или репозитория
+        """
+        response: ResponseModel[list[ProjectGroupAccessToken]] = await self._get(url, by_pagination=True)
         if response.status_code == HTTPStatus.OK:
             return response.data
         raise GitLabError(response.data)
