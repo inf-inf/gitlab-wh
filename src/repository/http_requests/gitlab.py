@@ -9,8 +9,10 @@ from .base import BaseHTTP, ResponseModel
 
 if TYPE_CHECKING:
     from src.types import Sort, State
+    from src.types.access_token.access_token import AccessTokenScopes
+    from src.types.access_token.personal import CreatedPersonalAccessToken, PersonalAccessToken
+    from src.types.access_token.project_group import CreatedProjectGroupAccessToken, ProjectGroupAccessToken
     from src.types.group import Group, GroupsOrderBy
-    from src.types.personal_access_token import AccessTokenScopes, CreatedPersonalAccessToken, PersonalAccessToken
     from src.types.project import CreatedProject, Project, ProjectsOrderBy
     from src.types.user import (
         AccessLevel,
@@ -42,6 +44,8 @@ class GitLabHTTPv4(BaseHTTP):
     URL_ALL_PERSONAL_ACCESS_TOKEN = "/api/v4/personal_access_tokens"  # noqa: S105
     URL_GROUP_MEMBERS = URL_ADD_USER_TO_GROUP
     URL_PROJECT_MEMBERS = URL_ADD_USER_TO_PROJECT
+    URL_PROJECT_ACCESS_TOKEN = "/api/v4/projects/{project_id}/access_tokens"  # noqa: S105
+    URL_GROUP_ACCESS_TOKEN = "/api/v4/groups/{group_id}/access_tokens"  # noqa: S105
 
     async def _offset_pagination(self,
                                  url: str,
@@ -256,6 +260,72 @@ class GitLabHTTPv4(BaseHTTP):
             return response.data["id"]
         raise GitLabError(response.data)
 
+    async def create_project_access_token(self,
+                                          project_id: int,
+                                          name: str,
+                                          scopes: list[AccessTokenScopes],
+                                          access_level: AccessLevel,
+                                          expires_at: date | None = None,
+                                          ) -> str:
+        """Создание Project Access Token
+
+        ВНИМАНИЕ! Только с токеном maintainer репозитория или выше
+
+        Create a project access token -
+            https://docs.gitlab.com/ee/api/project_access_tokens.html#create-a-project-access-token
+
+        Args:
+            project_id: id репозитория GitLab
+            name: наименование токена доступа
+            scopes: список разрешенных действий для токена
+            access_level: уровень доступа к репозиторию
+            expires_at: время, когда токен истечет
+
+        Returns:
+            Access Token для репозитория с id=project_id
+        """
+        url = self.URL_PROJECT_ACCESS_TOKEN.format(project_id=project_id)
+        return await self._create_access_token(
+            url,
+            name=name,
+            scopes=scopes,
+            access_level=access_level,
+            expires_at=expires_at,
+        )
+
+    async def create_group_access_token(self,
+                                        group_id: int,
+                                        name: str,
+                                        scopes: list[AccessTokenScopes],
+                                        access_level: AccessLevel,
+                                        expires_at: date | None = None,
+                                        ) -> str:
+        """Создание Group Access Token
+
+        ВНИМАНИЕ! Только с токеном owner группы или выше
+
+        Create a group access token -
+            https://docs.gitlab.com/ee/api/group_access_tokens.html#create-a-group-access-token
+
+        Args:
+            group_id: id группы GitLab
+            name: наименование токена доступа
+            scopes: список разрешенных действий для токена
+            access_level: уровень доступа к группе
+            expires_at: время, когда токен истечет
+
+        Returns:
+            Access Token для группы с id=group_id
+        """
+        url = self.URL_GROUP_ACCESS_TOKEN.format(group_id=group_id)
+        return await self._create_access_token(
+            url,
+            name=name,
+            scopes=scopes,
+            access_level=access_level,
+            expires_at=expires_at,
+        )
+
     async def create_personal_access_token(self,
                                            user_id: int,
                                            name: str,
@@ -287,6 +357,30 @@ class GitLabHTTPv4(BaseHTTP):
         if response.status_code == HTTPStatus.CREATED:
             return response.data["token"]
         raise GitLabError(response.data)
+
+    async def list_project_access_tokens(self, project_id: int) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Project Access Token для репозитория
+
+        Args:
+            project_id: id репозитория GitLab
+
+        Returns:
+            Список Access Token'ов репозитория
+        """
+        url = self.URL_PROJECT_ACCESS_TOKEN.format(project_id=project_id)
+        return await self._list_access_tokens(url)
+
+    async def list_group_access_tokens(self, group_id: int) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Group Access Token для группы
+
+        Args:
+            group_id: id группы GitLab
+
+        Returns:
+            Список Access Token'ов группы
+        """
+        url = self.URL_GROUP_ACCESS_TOKEN.format(group_id=group_id)
+        return await self._list_access_tokens(url)
 
     async def list_personal_access_tokens(self,
                                           search: str | None = None,
@@ -552,4 +646,55 @@ class GitLabHTTPv4(BaseHTTP):
         response: ResponseModel[list[MemberUser]] = await self._get(url, params=params, by_pagination=True)
         if response.status_code == HTTPStatus.OK:
             return response.data
+        raise GitLabError(response.data)
+
+    async def _list_access_tokens(self, url: str) -> list[ProjectGroupAccessToken]:
+        """Получение списка всех Project Access Token для репозитория или Group Access Token для группы
+
+        Args:
+            url: сформированный URL для запроса Access Token'ов группы или репозитория
+
+        Returns:
+            Список Access Token'ов группы или репозитория
+        """
+        response: ResponseModel[list[ProjectGroupAccessToken]] = await self._get(url, by_pagination=True)
+        if response.status_code == HTTPStatus.OK:
+            return response.data
+        raise GitLabError(response.data)
+
+    async def _create_access_token(self,
+                                   url: str,
+                                   *,
+                                   name: str,
+                                   scopes: list[AccessTokenScopes],
+                                   access_level: AccessLevel,
+                                   expires_at: date | None = None,
+                                   ) -> str:
+        """Создание Project/Group Access Token
+
+        Create a project access token -
+            https://docs.gitlab.com/ee/api/project_access_tokens.html#create-a-project-access-token
+
+        Create a group access token -
+            https://docs.gitlab.com/ee/api/group_access_tokens.html#create-a-group-access-token
+
+        Args:
+            url: сформированный URL для создания Project/Group Access Token
+            name: наименование токена доступа
+            scopes: список разрешенных действий для токена
+            access_level: уровень доступа
+            expires_at: время, когда токен истечет
+
+        Returns:
+            Access Token для репозитория/группы с id=id_
+        """
+        data = {
+            "name": name,
+            "scopes": scopes,
+            "access_level": access_level,
+            "expires_at": str(expires_at or date.today() + timedelta(days=364)),
+        }
+        response: ResponseModel[CreatedProjectGroupAccessToken] = await self._post(url, data)
+        if response.status_code == HTTPStatus.CREATED:
+            return response.data["token"]
         raise GitLabError(response.data)
