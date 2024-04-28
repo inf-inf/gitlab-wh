@@ -1,10 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Form, Query, Response, status
 from fastapi.responses import RedirectResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
 from src.dependencies.templates import get_common_trg_prefill_path
+from src.models.pages.alert import Alert
 
 index_router = APIRouter(tags=["pages.index"])
 
@@ -20,3 +21,29 @@ async def index(get_trg: GetTRGDep) -> Response:
 async def redirect_favicon() -> RedirectResponse:
     """В случае если на странице не указан адрес фавикона, средиректить браузер"""
     return RedirectResponse(url="/static/img/favicon.ico", status_code=status.HTTP_301_MOVED_PERMANENTLY)
+
+@index_router.get("/sign_in", summary="Страница входа")
+async def get_sign_in(get_trg: GetTRGDep,
+                      redirect: str = Query("/", description=("Страница, на которую произойдет редирект в случае "
+                                                              "успешной авторизации")),
+                      ) -> Response:
+    """Страница входа в админ панель"""
+    context = {
+          "redirect": redirect,
+    }
+    return get_trg.generate_response("sign_in.html.j2", context)
+
+@index_router.post("/sign_in", summary="Обработка авторизации")
+async def post_sign_in(get_trg: GetTRGDep,
+                       access_token: str = Form(min_length=1, max_length=255,
+                                                description="Personal Access Token пользователя/бота"),
+                       redirect: str = Form("/", description=("Страница, на которую произойдет редирект в случае "
+                                                              "успешной авторизации")),
+                       ) -> Response:
+      """Авторизация, проверка логина и пароля"""
+      context = {
+            "access_token": access_token,
+            "redirect": redirect,
+      }
+      alert = Alert(level="error", msg="Неверный токен")
+      return get_trg.generate_response("sign_in.html.j2", context=context, alert=alert)
