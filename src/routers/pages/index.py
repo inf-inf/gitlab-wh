@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, Query, Response, status
+from fastapi import APIRouter, Depends, Form, Query, Response
 from fastapi.responses import RedirectResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
@@ -17,11 +17,6 @@ GetTRGDep = Annotated[CommonTemplateResponseGenerator, Depends(get_common_trg_pr
 async def index(get_trg: GetTRGDep, _auth_token: str = Depends(get_auth_token)) -> Response:
     """Главная страница"""
     return get_trg.generate_response("index.html.j2")
-
-@index_router.get("/favicon.ico", summary="Редирект фавикон", response_class=RedirectResponse)
-async def redirect_favicon() -> RedirectResponse:
-    """В случае если на странице не указан адрес фавикона, средиректить браузер"""
-    return RedirectResponse(url="/static/img/favicon.ico", status_code=status.HTTP_301_MOVED_PERMANENTLY)
 
 @index_router.get("/sign_in", summary="Страница входа")
 async def get_sign_in(get_trg: GetTRGDep,
