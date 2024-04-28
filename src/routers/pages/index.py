@@ -42,10 +42,16 @@ async def post_sign_in(get_trg: GetTRGDep,
                        redirect: str = Form("/", description=("Страница, на которую произойдет редирект в случае "
                                                               "успешной авторизации")),
                        ) -> Response:
-      """Авторизация, проверка логина и пароля"""
-      context = {
+    """Авторизация, проверка логина и пароля"""
+    # TODO проверка токена
+    if access_token == "12345":  # noqa: S105
+        context = {
             "access_token": access_token,
             "redirect": redirect,
-      }
-      alert = Alert(level="error", msg="Неверный токен")
-      return get_trg.generate_response("sign_in.html.j2", context=context, alert=alert)
+        }
+        alert = Alert(level="error", msg="Неверный токен")
+        return get_trg.generate_response("sign_in.html.j2", context=context, alert=alert)
+
+    response = RedirectResponse(url=redirect, status_code=302)
+    response.set_cookie(key="auth_token", value=access_token)
+    return response
