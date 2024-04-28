@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Form, Query, Response, status
 from fastapi.responses import RedirectResponse
 
 from src.app.templates import CommonTemplateResponseGenerator
+from src.dependencies.auth import get_auth_token
 from src.dependencies.templates import get_common_trg_prefill_path
 from src.models.pages.alert import Alert
 
@@ -13,7 +14,7 @@ GetTRGDep = Annotated[CommonTemplateResponseGenerator, Depends(get_common_trg_pr
 
 
 @index_router.get("/", summary="Главная страница")
-async def index(get_trg: GetTRGDep) -> Response:
+async def index(get_trg: GetTRGDep, _auth_token: str = Depends(get_auth_token)) -> Response:
     """Главная страница"""
     return get_trg.generate_response("index.html.j2")
 
