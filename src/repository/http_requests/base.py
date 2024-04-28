@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -9,8 +10,11 @@ if TYPE_CHECKING:
     from aiohttp import ClientSession
 
 
+T = TypeVar("T")
+
+
 @dataclass
-class ResponseModel:
+class ResponseModel(Generic[T]):
     """Модель Response, возвращаемая BaseHTTP
 
     Args:
@@ -18,23 +22,24 @@ class ResponseModel:
         status_code: статус код HTTP ответа
         headers: заголовки HTTP ответа
     """
-    data: dict[str, Any] | list[dict[str, Any]]
+    data: T
     status_code: int
     headers: Mapping[str, str]
 
 
-class BaseHTTP:
+class BaseHTTP(ABC):
     """Базовый класс для реализации HTTP запросов"""
     def __init__(self, session: ClientSession) -> None:
         """Конструктор"""
         self._session = session
 
-    async def _get(self,
-                   url: str,
-                   params: dict[str, Any] | None = None,
-                   headers: dict[str, Any] | None = None,
-                   ) -> ResponseModel:
-        """Реализация GET запроса
+    @abstractmethod
+    async def _by_pagination(self,
+                             url: str,
+                             params: dict[str, Any] | None = None,
+                             headers: dict[str, Any] | None = None,
+                             ) -> ResponseModel[Any]:
+        """Получение всех записей (множество GET запросов) с использованием пагинаций
 
         Args:
             url: URL-адрес для GET запроса
@@ -42,7 +47,24 @@ class BaseHTTP:
             headers: заголовки для GET запроса
 
         Returns:
-            Результат GET запроса (JSON в виде словаря)
+            Агрегированный результат множества GET запросов (агрегация пагинаций),
+            где статус код и заголовки будут от самого 1-го запроса в пачке
+        """
+
+    async def _get_one(self,
+                       url: str,
+                       params: dict[str, Any] | None = None,
+                       headers: dict[str, Any] | None = None,
+                       ) -> ResponseModel[Any]:
+        """Отправка одного GET запроса
+
+        Args:
+            url: URL-адрес для GET запроса
+            params: словарь ключей и их значений для GET запроса
+            headers: заголовки для GET запроса
+
+        Returns:
+            Результат GET запроса
         """
         async with self._session.get(url, params=params, headers=headers) as response:
             return ResponseModel(
@@ -51,11 +73,34 @@ class BaseHTTP:
                 headers=response.headers,
             )
 
+    async def _get(self,
+                   url: str,
+                   params: dict[str, Any] | None = None,
+                   headers: dict[str, Any] | None = None,
+                   *,
+                   by_pagination: bool = False,
+                   ) -> ResponseModel[Any]:
+        """Реализация GET запроса
+
+        Args:
+            url: URL-адрес для GET запроса
+            params: словарь ключей и их значений для GET запроса
+            headers: заголовки для GET запроса
+            by_pagination: использовать ли пагинации GitLab
+
+        Returns:
+            Результат GET запроса
+        """
+        params = params and {key: value for key, value in params.items() if value is not None}
+        if by_pagination:
+            return await self._by_pagination(url, params, headers)
+        return await self._get_one(url, params, headers)
+
     async def _post(self,
                     url: str,
-                    data: dict[str, Any] | None = None,
+                    data: dict[str, Any],
                     headers: dict[str, Any] | None = None,
-                    ) -> ResponseModel:
+                    ) -> ResponseModel[Any]:
         """Реализация POST запроса
 
         Args:
@@ -64,7 +109,7 @@ class BaseHTTP:
             headers: заголовки для POST запроса
 
         Returns:
-            Результат POST запроса (JSON в виде словаря)
+            Результат POST запроса
         """
         async with self._session.post(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -75,9 +120,9 @@ class BaseHTTP:
 
     async def _put(self,
                    url: str,
-                   data: dict[str, Any] | None = None,
+                   data: dict[str, Any],
                    headers: dict[str, Any] | None = None,
-                   ) -> ResponseModel:
+                   ) -> ResponseModel[Any]:
         """Реализация PUT запроса
 
         Args:
@@ -86,7 +131,7 @@ class BaseHTTP:
             headers: заголовки для PUT запроса
 
         Returns:
-            Результат PUT запроса (JSON в виде словаря)
+            Результат PUT запроса
         """
         async with self._session.put(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -97,9 +142,9 @@ class BaseHTTP:
 
     async def _patch(self,
                      url: str,
-                     data: dict[str, Any] | None = None,
+                     data: dict[str, Any],
                      headers: dict[str, Any] | None = None,
-                     ) -> ResponseModel:
+                     ) -> ResponseModel[Any]:
         """Реализация PATCH запроса
 
         Args:
@@ -108,7 +153,7 @@ class BaseHTTP:
             headers: заголовки для PATCH запроса
 
         Returns:
-            Результат PATCH запроса (JSON в виде словаря)
+            Результат PATCH запроса
         """
         async with self._session.patch(url, json=data, headers=headers) as response:
             return ResponseModel(
@@ -121,7 +166,7 @@ class BaseHTTP:
                       url: str,
                       params: dict[str, Any] | None = None,
                       headers: dict[str, Any] | None = None,
-                      ) -> ResponseModel:
+                      ) -> ResponseModel[Any]:
         """Реализация DELETE запроса
 
         Args:
@@ -130,7 +175,7 @@ class BaseHTTP:
             headers: заголовки для DELETE запроса
 
         Returns:
-            Результат DELETE запроса (JSON в виде словаря)
+            Результат DELETE запроса
         """
         async with self._session.delete(url, params=params, headers=headers) as response:
             return ResponseModel(
