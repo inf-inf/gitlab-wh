@@ -26,12 +26,14 @@ async def redirect_favicon() -> RedirectResponse:
 async def get_sign_in(get_trg: GetTRGDep,
                       redirect: str = Query("/", description=("Страница, на которую произойдет редирект в случае "
                                                               "успешной авторизации")),
+                      warning: str | None = Query(None, description="Предупреждение"),
                       ) -> Response:
     """Страница входа в админ панель"""
     context = {
           "redirect": redirect,
     }
-    return get_trg.generate_response("sign_in.html.j2", context)
+    alert = Alert(level="warning", msg=warning) if warning else None
+    return get_trg.generate_response("sign_in.html.j2", context, alert=alert)
 
 @index_router.post("/sign_in", summary="Обработка авторизации")
 async def post_sign_in(get_trg: GetTRGDep,
