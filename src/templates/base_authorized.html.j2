@@ -21,8 +21,23 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Пользователи</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://inf-inf.github.io/gitlab-wh/" target="_blank">
+            Документация <small><i class="bi bi-box-arrow-up-right"></i></small>
+          </a>
+        </li>
       </ul>
-      <div class="text-end">
+      <div class="navbar-nav">
+        <div class="vr mx-3"></div>
+        <div>
+          <small class="navbar-text">GitLab: v16.8</small>
+          <br>
+          <small class="navbar-text">GitLab-WH: v0.0.0</small>
+        </div>
+        <div class="vr mx-3"></div>
+      </div>
+
+      <div class="text-end ms-3">
         <span class="navbar-text">Фамилия И.О.</span>
         <button class="btn btn-outline-danger ms-2" type="submit">Выйти</button>
       </div>
@@ -30,5 +45,8 @@
   </div>
 </nav>
 
+<div class="container mt-3">
+{% block page %}{% endblock %}
+</div>
 
 {% endblock %}

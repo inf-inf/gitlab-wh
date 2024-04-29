@@ -1,3 +1,9 @@
+"""deprecated
+
+Изначальная идея была в заведении учеток пользователей, к которым крепились бы токены доступа.
+Однако, решено было упростить пользовательский путь. В данный момент используется форма авторизации сразу по токену
+из GitLab в роутере index
+"""
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Query, Response
@@ -7,7 +13,7 @@ from src.app.templates import CommonTemplateResponseGenerator
 from src.dependencies.templates import get_common_trg_prefill_path
 from src.models.pages.alert import Alert
 
-users_router = APIRouter(prefix="/users", tags=["pages.users"])
+users_router = APIRouter(prefix="/users", tags=["pages.users"], deprecated=True)
 
 GetTRGDep = Annotated[CommonTemplateResponseGenerator, Depends(get_common_trg_prefill_path("pages/users"))]
 
