@@ -11,11 +11,12 @@ from fastapi.exception_handlers import (
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
-from starlette.responses import PlainTextResponse, Response
+from starlette.responses import PlainTextResponse, RedirectResponse, Response
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY, HTTP_500_INTERNAL_SERVER_ERROR
 
 from src import config
 
+from .exceptions import RedirectError
 from .templates import CommonTemplateResponseGenerator
 
 logger = logging.getLogger("gitlab-wh.error")
@@ -117,7 +118,15 @@ async def html_unhandled_exception_handler(request: Request, _exc: Exception) ->
     return await get_html_error_page(request=request, status_code=500)
 
 
+async def redirect_exception_handler(_request: Request, exc: RedirectError) -> Response:
+    """Обработчик ошибки Exception"""
+    logger.exception("Ошибка RedirectError")
+
+    return RedirectResponse(url=exc.url, status_code=exc.status_code)
+
+
 exception_handlers: dict[int | type[Exception], Callable[[Request, Any], Coroutine[Any, Any, Response]]] = {
+    RedirectError: redirect_exception_handler,
     HTTPException: html_http_exception_handler,
     RequestValidationError: html_request_validation_exception_handler,
     Exception: html_unhandled_exception_handler,

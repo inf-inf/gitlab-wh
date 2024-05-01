@@ -16,20 +16,24 @@ class GitLabWH:
         self._app = app_type(
             title="GitLab-WH",
             openapi_url="/api/service/openapi.json",
-            openapi_tags=[
+            openapi_tags=sorted([
                 {
                     "name": "api.service",
-                    "description": "Сервисные методы приложения",
+                    "description": "Сервисные методы API",
                 },
                 {
                     "name": "pages.index",
-                    "description": "Главная страница",
+                    "description": "Основные страницы",
                 },
                 {
                     "name": "pages.users",
                     "description": "Страницы для работы с учетной записью пользователя",
                 },
-            ],
+                {
+                    "name": "pages.service",
+                    "description": "Сервисные методы фронта",
+                },
+            ], key=lambda tag: tag["name"]),
             swagger_ui_parameters={
                 "displayRequestDuration": True,
                 "filter": True,
